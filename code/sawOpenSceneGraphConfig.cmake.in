@@ -1,0 +1,4 @@
+
+set( sawOpenSceneGraph_INCLUDE_DIR "@sawOpenSceneGraph_INCLUDE_DIR@" )
+set( sawOpenSceneGraph_LIBRARY_DIR "@sawOpenSceneGraph_LIBRARY_DIR@" )
+set( sawOpenSceneGraph_LIBRARIES   "@sawOpenSceneGraph_LIBRARIES@" )
