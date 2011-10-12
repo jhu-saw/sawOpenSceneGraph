@@ -53,14 +53,15 @@ class CISST_EXPORT osaOSGStereo : public osaOSGCamera {
 
   void Initialize();
   
-#if CISST_DEV_HAS_OPENCV22
+#if 0
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
  public:
-  std::list< std::list< osaOSGBody* > > GetVisibilityList( size_t idx );
+  //std::list< std::list< osaOSGBody* > > GetVisibilityList( size_t idx );
   vctDynamicMatrix<double> GetRangeData( size_t idx );
   vctDynamicNArray<unsigned char,3> GetRGBPlanarImage( size_t idx );
   cv::Mat GetRGBImage( size_t idx );
 #endif
-
+#endif
 };
 
 #endif

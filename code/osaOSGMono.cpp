@@ -22,7 +22,7 @@ osaOSGMono::osaOSGMono( osaOSGWorld* world,
   getCamera()->setViewport( new osg::Viewport( x, y, width, height ) );
 
   // Setup the OpenCV stuff
-#if CISST_OSG_OPENCV
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
   // Create a drawing callback. This callback is set to capture depth+color 
   // buffer (true, true)
@@ -35,7 +35,7 @@ osaOSGMono::osaOSGMono( osaOSGWorld* world,
   CMN_ASSERT( finaldrawcallback );
   getCamera()->setFinalDrawCallback( finaldrawcallback );
 
-#endif
+#endif // SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
 }
 
@@ -74,7 +74,7 @@ void osaOSGMono::Initialize(){
 
 }
 
-#if CISST_OSG_OPENCV
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
 /*
 std::list< std::list< osaOSGBody* > > osaOSGMono::GetVisibilityList(){
@@ -232,4 +232,4 @@ osaOSGMono::Errno osaOSGMono::GetDepthImage( cv::Mat& depth ){
 }
 
 
-#endif
+#endif // SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV

@@ -33,7 +33,7 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
 	      osg::Matrixd::translate( baseline/2.0, 0.0, 0.0 ) );
 
     // Only do drawing callback if OpenCV is enabled
-#if CISST_DEV_HAS_OPENCV22
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
     // Create a drawing callback. This callback is set to capture depth+color 
     // buffer (true, true)
     osg::ref_ptr<osaOSGCamera::FinalDrawCallback> finaldrawcallback;
@@ -45,7 +45,7 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
     }
     CMN_ASSERT( finaldrawcallback );
     camera->setFinalDrawCallback( finaldrawcallback );
-#endif
+#endif //SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
   }
 
@@ -67,7 +67,7 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
 	      osg::Matrixd::translate( -baseline/2.0, 0.0, 0.0 ) );
 
     // Only do drawing callback if OpenCV is enabled
-#if CISST_DEV_HAS_OPENCV22
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
     // Create a drawing callback. This callback is set to capture depth+color 
     // buffer (true, true)
     osg::ref_ptr<osaOSGCamera::FinalDrawCallback> finaldrawcallback;
@@ -79,7 +79,7 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
     }
     CMN_ASSERT( finaldrawcallback );
     camera->setFinalDrawCallback( finaldrawcallback );
-#endif
+#endif // SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
   }
 
@@ -148,8 +148,10 @@ void osaOSGStereo::Initialize(){
 
 }
 
-#if CISST_DEV_HAS_OPENCV22
-
+#if 0
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
+#include <cisstOSAbstraction/osaSleep.h>
+/*
 std::list< std::list< osaOSGBody* > > osaOSGStereo::GetVisibilityList( size_t idx ){
 
   // Get the left/right slave
@@ -171,6 +173,7 @@ std::list< std::list< osaOSGBody* > > osaOSGStereo::GetVisibilityList( size_t id
   }
   return std::list< std::list< osaOSGBody* > >();
 }
+*/
 
 vctDynamicNArray<unsigned char,3> osaOSGStereo::GetRGBPlanarImage(size_t idx){
 
@@ -273,4 +276,5 @@ vctDynamicMatrix<unsigned char> osaOSGStereo::GetRGBPixelImage(size_t idx) const
   return x;
 }
 */
+#endif // SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 #endif

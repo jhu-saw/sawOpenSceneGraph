@@ -23,7 +23,7 @@ void osaOSGCamera::UpdateCallback::operator()( osg::Node* node,
 
 }
 
-#if CISST_OSG_OPENCV
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
 osaOSGCamera::FinalDrawCallback::Data::Data( size_t width, size_t height ) : 
   osg::Referenced(),                            // referenced object
@@ -316,7 +316,7 @@ osaOSGCamera::FinalDrawCallback::ComputeRGBImage
   //cv::imwrite( "rgb.bmp", cvColorImage );
 }
 
-#endif
+#endif // SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
 osaOSGCamera::osaOSGCamera( osaOSGWorld* world,
 				bool trackball,

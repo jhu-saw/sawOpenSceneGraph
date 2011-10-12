@@ -5,10 +5,6 @@
 
 #include <sawOpenSceneGraph/sawOpenSceneGraphConfig.h>
 
-#if CISST_OSG_OPENCV
-#include <opencv2/opencv.hpp>
-#endif
-
 #include <cisstVector/vctDynamicNArray.h>
 #include <sawOpenSceneGraph/osaOSGCamera.h>
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
@@ -58,7 +54,7 @@ class CISST_EXPORT osaOSGMono : public osaOSGCamera {
 
   void Initialize();
     
-#if CISST_OSG_OPENCV
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
  public:
 

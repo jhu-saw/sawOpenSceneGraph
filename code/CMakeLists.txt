@@ -24,7 +24,7 @@ find_package( OpenCV2 )
 if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
 
   if( OpenCV2_FOUND )
-    set( CISST_OSG_OPENCV ON )
+    set( SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV ON )
     mark_as_advanced( FORCE ${OpenCV2_OPTIONS})
   endif( OpenCV2_FOUND )
   

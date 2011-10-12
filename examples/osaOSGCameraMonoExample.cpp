@@ -39,7 +39,7 @@ int main( int, char** argv ){
 
   // animate and render
   double theta=1.0;
-#if CISST_OSG_OPENCV
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
   cv::namedWindow( "RGB", CV_WINDOW_AUTOSIZE );
   cv::namedWindow( "Depth", CV_WINDOW_AUTOSIZE );
@@ -62,7 +62,7 @@ int main( int, char** argv ){
 
     camera->frame();
 
-#if CISST_OSG_OPENCV
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
     cv::Mat rgb, depth;
     camera->GetRGBImage( rgb );

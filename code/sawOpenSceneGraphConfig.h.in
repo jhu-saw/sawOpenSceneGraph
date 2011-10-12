@@ -26,6 +26,6 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstConfig.h>
 
 // Using OpenCV 2.2
-#cmakedefine01 CISST_OSG_OPENCV
+#cmakedefine SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
 #endif

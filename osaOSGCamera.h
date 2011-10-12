@@ -5,7 +5,7 @@
 
 #include <sawOpenSceneGraph/sawOpenSceneGraphConfig.h>
 
-#if CISST_OSG_OPENCV
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 #include <opencv2/opencv.hpp>
 #endif
 
@@ -88,7 +88,7 @@ class CISST_EXPORT osaOSGCamera : public osgViewer::Viewer{
 
 
   // Only enable this if OpenCV2 is enabled
-#if CISST_OSG_OPENCV
+#ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
   //! Final drawing callback
   /**
@@ -192,7 +192,7 @@ class CISST_EXPORT osaOSGCamera : public osgViewer::Viewer{
     
   }; // FinalDrawCallback
 
-#endif // CISST_OSG_OPENCV
+#endif // SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
 
 
