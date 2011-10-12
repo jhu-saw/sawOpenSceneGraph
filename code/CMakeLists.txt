@@ -73,17 +73,30 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
       )
     
 
-    include_directories(
-      ${OPENSCENEGRAPH_INCLUDE_DIRS} 
-      ${OpenCV2_INCLUDE_DIRS}
-      ${INCLUDE_OUTPUT_PATH})
+    set( 
+      SAW_OPENSCENEGRAPH_INCLUDE_DIRS 
+      ${INCLUDE_OUTPUT_PATH} 
+      ${OPENSCENEGRAPH_INCLUDE_DIRS} )
+    set( SAW_OPENSCENEGRAPH_LINK_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} )
+
+    if( OpenCV2_FOUND )
+      set( 
+	SAW_OPENSCENEGRAPH_INCLUDE_DIRS
+	${SAW_OPENSCENEGRAPH_INCLUDE_DIRS}
+	${OpenCV2_INCLUDE_DIRS} )
+      set( 
+	SAW_OPENSCENEGRAPH_LINK_LIBRARIES
+	${SAW_OPENSCENEGRAPH_LINK_LIBRARIES}
+	${OpenCV2_LIBRARIES} )
+    endif( OpenCV2_FOUND )
+
+    include_directories( ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
 
     add_library( sawOpenSceneGraph ${HEADER_FILES} ${SOURCE_FILES} )
 
     target_link_libraries( 
       sawOpenSceneGraph 
-      ${OPENSCENEGRAPH_LIBRARIES} 
-      ${OpenCV2_LIBRARIES} )
+      ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
 
     cisst_target_link_libraries( sawOpenSceneGraph ${REQUIRED_CISST_LIBRARIES} )
 
@@ -91,12 +104,13 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
       sawOpenSceneGraph_INCLUDE_DIR 
       "${sawComponents_SOURCE_DIR}" 
       "${sawComponents_BINARY_DIR}"
-      ${INCLUDE_OUTPUT_PATH}
-      ${OPENSCENEGRAPH_INCLUDE_DIRS} 
-      ${OpenCV2_INCLUDE_DIRS} )
+      ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
 
     set(sawOpenSceneGraph_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
-    set(sawOpenSceneGraph_LIBRARIES sawOpenSceneGraph ${OPENSCENEGRAPH_LIBRARIES} )
+    set( 
+      sawOpenSceneGraph_LIBRARIES 
+      sawOpenSceneGraph 
+      ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
 
     configure_file (
       "${CMAKE_CURRENT_SOURCE_DIR}/sawOpenSceneGraphConfig.cmake.in"
