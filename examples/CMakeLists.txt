@@ -17,10 +17,13 @@
 
 set( 
   REQUIRED_CISST_LIBRARIES 
-  cisstCommon
-  cisstVector
-  cisstOSAbstraction
-  cisstMultiTask )
+     cisstCommon
+     cisstVector
+     cisstOSAbstraction
+     cisstRobot
+     cisstNumerical
+     cisstMultiTask
+     cisstParameterTypes)
 
 find_package( cisst REQUIRED ${REQUIRED_CISST_LIBRARIES} )
 find_package( sawOpenSceneGraph REQUIRED HINTS "${CISST_BINARY_DIR}/saw/components" )
