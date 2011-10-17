@@ -31,7 +31,7 @@ mtsOSGBody::mtsOSGBody( const std::string& name,
   // Create the IO interface and add read/write commands
   input = AddInterfaceRequired( "Input", MTS_OPTIONAL );
   if( input )
-    { input->AddFunction( "GetPositionOrientation", GetPosition ); }
+    { input->AddFunction( "GetPositionCartesian", GetPosition ); }
   else{
     CMN_LOG_CLASS_RUN_ERROR << "Failed to create the interface Input" 
 			    << std::endl;
