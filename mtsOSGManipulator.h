@@ -21,7 +21,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawOpenSceneGraph/osaOSGManipulator.h>
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
 
-class CISST_EXPORT mtsOSGManipulator : public mtsOSGManipulatorTask {
+class mtsOSGManipulator : public mtsOSGManipulatorTask {
 
  public:
 

@@ -2,6 +2,7 @@
 #include <osg/MatrixTransform>
 #include <osgGA/TrackballManipulator>
 
+#include <cisstVector/vctQuaternionRotation3.h>
 
 #if (CISST_OS == CISST_DARWIN)
 #include <OpenGL/glu.h>
@@ -388,9 +389,10 @@ void osaOSGCamera::UpdateTransform()
 void osaOSGCamera::SetTransform( const vctFrame4x4<double>& Rt ){
   vctFrame4x4<double> Rti( Rt );
   Rti.InverseSelf();
-  vctQuaternionRotation3<double> Ri( Rti.Rotation() );
+  vctMatrixRotation3<double> Ri( Rti.Rotation() );
+  vctQuaternionRotation3<double> qi( Ri );
 
-  osgtransform.setRotate( osg::Quat ( Ri[0], Ri[1], Ri[2], Ri[3] ) );
+  osgtransform.setRotate( osg::Quat ( qi[0], qi[1], qi[2], qi[3] ) );
   osgtransform.setTrans( osg::Vec3d( Rti[0][3], Rti[1][3], Rti[2][3] ) );
 }
 

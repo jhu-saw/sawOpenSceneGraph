@@ -24,7 +24,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawOpenSceneGraph/mtsOSGCameraTask.h>
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
 
-class CISST_EXPORT mtsOSGMono : public mtsOSGCameraTask {
+class mtsOSGMono : public mtsOSGCameraTask {
   
  public:
   

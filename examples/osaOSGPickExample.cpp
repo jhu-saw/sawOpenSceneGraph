@@ -5,6 +5,14 @@
 
 #include <cisstVector/vctMatrixRotation3.h>
 
+class MyPick : public osaOSGPick{
+
+  void PickHandler( osaOSGBody* body ){
+    std::cout << body->getName() << std::endl;
+  }
+
+};
+
 int main(){
 
   cmnLogger::SetMask( CMN_LOG_ALLOW_ALL );
@@ -24,7 +32,7 @@ int main(){
 			     55.0, ((double)width)/((double)height),
 			     Znear, Zfar );
   camera->Initialize();
-  camera->addEventHandler( new osaOSGPick() );
+  camera->addEventHandler( new MyPick() );
 
   // Create objects
   std::string data( CISST_SOURCE_ROOT"/cisst/etc/cisstRobot/objects/" );
