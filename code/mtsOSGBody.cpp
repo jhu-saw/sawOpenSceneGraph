@@ -23,9 +23,11 @@ http://www.cisst.org/cisst/license.txt.
 mtsOSGBody::mtsOSGBody( const std::string& name,
 			const std::string& model,
 			osaOSGWorld* world,
-			const vctFrame4x4<double>& Rt ) :
+			const vctFrame4x4<double>& Rt,
+			double scale,
+			const std::string& option ):
   mtsComponent( name ),
-  osaOSGBody( model, world, Rt ),
+  osaOSGBody( model, world, Rt, scale, option ),
   input( NULL ){
 
   // Create the IO interface and add read/write commands

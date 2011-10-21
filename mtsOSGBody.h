@@ -44,7 +44,9 @@ class CISST_EXPORT mtsOSGBody :
   mtsOSGBody( const std::string& name,
 	      const std::string& model,
 	      osaOSGWorld* world,
-	      const vctFrame4x4<double>& Rt );
+	      const vctFrame4x4<double>& Rt,
+	      double scale = 1.0,
+	      const std::string& option = std::string("") );
 
   ~mtsOSGBody(){}
 
