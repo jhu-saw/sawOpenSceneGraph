@@ -1,12 +1,13 @@
 #include <sawOpenSceneGraph/osaOSGStereo.h>
 
 osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
-				int x, int y, int width, int height,
-				double fovy, double aspectRatio,
-				double zNear, double zFar,
-				double baseline, 
-				bool trackball ) :
-  osaOSGCamera( world, trackball ),
+			    int x, int y, int width, int height,
+			    double fovy, double aspectRatio,
+			    double zNear, double zFar,
+			    double baseline, 
+			    bool trackball,
+			    const vctFrame4x4<double>& Rtoffset ) :
+  osaOSGCamera( world, trackball, Rtoffset ),
   x( x ),                              // x position
   y( y ),                              // y position
   width( width ),                      // width of images

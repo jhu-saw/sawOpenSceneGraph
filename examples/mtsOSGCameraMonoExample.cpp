@@ -27,7 +27,7 @@ public:
 
     // provide the camera position
     mtsInterfaceProvided* output = AddInterfaceProvided( "Output" );
-    output->AddCommandReadState( StateTable, Rt, "GetPositionOrientation" );
+    output->AddCommandReadState( StateTable, Rt, "GetPositionCartesian" );
 
   }
 
@@ -106,7 +106,7 @@ int main(){
 			   width, height,
 			   55.0, ((double)width)/((double)height),
 			   Znear, Zfar,
-			   false, false );
+			   false );
   taskManager->AddComponent( camera );
   
   // create the camera motion

@@ -35,14 +35,17 @@ class mtsOSGMono : public mtsOSGCameraTask {
 	      double fovy, double aspectRatio,
 	      double zNear, double zFar,
 	      bool trackball = true,
+	      const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>(),
 	      bool offscreenrendering = false ) : 
     mtsOSGCameraTask( name, 
 		      new osaOSGMono( world, 
-					x, y, 
-					width, height, 
-					fovy, aspectRatio,
-					zNear, zFar,
-					trackball, offscreenrendering ) ){}
+				      x, y, 
+				      width, height, 
+				      fovy, aspectRatio,
+				      zNear, zFar,
+				      trackball,
+				      Rtoffset,
+				      offscreenrendering ) ){}
   ~mtsOSGMono(){}
 
 };

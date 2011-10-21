@@ -27,7 +27,7 @@ public:
 
     // provide the camera position
     mtsInterfaceProvided* output = AddInterfaceProvided( "Output" );
-    output->AddCommandReadState( StateTable, Rt, "GetPositionOrientation" );
+    output->AddCommandReadState( StateTable, Rt, "GetPositionCartesian" );
 
   }
 

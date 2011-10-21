@@ -35,7 +35,7 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
   input = AddInterfaceProvided( "Input" );
   if( input ){
 
-    StateTable.AddData( qin, "PositionsInput" );
+    StateTable.AddData( qin, "PositionJointInput" );
     input->AddCommandWriteState( StateTable, qin, "SetPositionJoint" );
 
   }
@@ -47,8 +47,10 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
   output = AddInterfaceProvided( "Output" );
   if( output ){
 
-    StateTable.AddData( qout, "PositionsOutput" );
-    output->AddCommandReadState( StateTable, qout, "GetPositionJoint" );
+    StateTable.AddData( qout,  "PositionJointOutput" );
+    StateTable.AddData( Rtout, "PositionCartesianOutput" );
+    output->AddCommandReadState( StateTable, Rtout, "GetPositionCartesian" );
+    output->AddCommandReadState( StateTable, qout,  "GetPositionJoint" );
 
   }
   else{
@@ -75,6 +77,10 @@ void mtsOSGManipulatorTask::Run(){
       CMN_LOG_RUN_ERROR << "Failed to get position for " << GetName()
 			<< std::endl;
     }
+
+    vctFrame4x4<double> Rt4x4 = manipulator->ForwardKinematics( qin.Goal() );
+    vctQuaternionRotation3<double> q( Rt4x4.Rotation(), VCT_NORMALIZE );
+    Rtout.Position() = vctFrm3( q, Rt4x4.Translation() );
 
   }
 

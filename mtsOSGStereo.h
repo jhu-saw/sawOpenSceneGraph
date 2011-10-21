@@ -37,15 +37,17 @@ class mtsOSGStereo : public mtsOSGCameraTask {
 		double fovy, double aspectRatio,
 		double zNear, double zFar,
 		double baseline,
-		bool trackball = true ) :
+		bool trackball = true,
+		const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>() ) :
     mtsOSGCameraTask( name, 
 		      new osaOSGStereo( world,
-					  x, y, 
-					  width, height, 
-					  fovy, aspectRatio, 
-					  zNear, zFar,
-					  baseline,
-					  trackball ) ){}
+					x, y, 
+					width, height, 
+					fovy, aspectRatio, 
+					zNear, zFar,
+					baseline,
+					trackball,
+					Rtoffset ) ){}
   
   ~mtsOSGStereo(){}
 

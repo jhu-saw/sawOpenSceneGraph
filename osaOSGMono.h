@@ -44,11 +44,12 @@ class CISST_EXPORT osaOSGMono : public osaOSGCamera {
      \param offscreenrendering Set to true if you want to render off screen
   */
   osaOSGMono( osaOSGWorld* world,
-		int x, int y, int width, int height,
-		double fovy, double aspectRatio,
-		double zNear, double zFar,
-		bool trackball = true,
-		bool offscreenrendering = false );
+	      int x, int y, int width, int height,
+	      double fovy, double aspectRatio,
+	      double zNear, double zFar,
+	      bool trackball = true,
+	      const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>(),
+	      bool offscreenrendering = false );
   
   ~osaOSGMono();
 

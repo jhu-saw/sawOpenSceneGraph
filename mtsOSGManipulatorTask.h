@@ -21,6 +21,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstMultiTask/mtsInterfaceProvided.h>
 
 #include <cisstParameterTypes/prmPositionJointGet.h>
+#include <cisstParameterTypes/prmPositionCartesianGet.h>
 #include <cisstParameterTypes/prmPositionJointSet.h>
 
 #include <cisstOSAbstraction/osaCPUAffinity.h>
@@ -34,6 +35,7 @@ class CISST_EXPORT mtsOSGManipulatorTask : public mtsTaskPeriodic {
 
   osg::ref_ptr<osaOSGManipulator> manipulator;
 
+  prmPositionCartesianGet Rtout;
   prmPositionJointGet qout;
   prmPositionJointSet qin;
 

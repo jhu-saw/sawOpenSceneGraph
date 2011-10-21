@@ -35,7 +35,8 @@ void mtsOSGCameraTask::UpdateCallback::operator()( osg::Node* node,
 }
 
 
-mtsOSGCameraTask::mtsOSGCameraTask( const std::string& name, osaOSGCamera* camera ) : 
+mtsOSGCameraTask::mtsOSGCameraTask( const std::string& name, 
+				    osaOSGCamera* camera ):
   mtsTaskContinuous( name ),
   camera( camera ),
   input( NULL ){
@@ -43,7 +44,7 @@ mtsOSGCameraTask::mtsOSGCameraTask( const std::string& name, osaOSGCamera* camer
   // Create the IO interface and add read/write commands
   input = AddInterfaceRequired( "Input", MTS_OPTIONAL );
   if( input )
-    { input->AddFunction( "GetPositionOrientation", GetPosition ); }
+    { input->AddFunction( "GetPositionCartesian", GetPosition ); }
   else{
     CMN_LOG_CLASS_RUN_ERROR << "Failed to create the interface Input" 
 			    << std::endl;
@@ -87,7 +88,6 @@ void mtsOSGCameraTask::Cleanup(){}
 void mtsOSGCameraTask::UpdateTransform(){
 
   if( GetPosition.IsValid() ){
-
     // Get the position of the camera
     prmPositionCartesianGet Rt;
     GetPosition( Rt );

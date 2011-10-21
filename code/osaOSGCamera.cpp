@@ -320,10 +320,11 @@ osaOSGCamera::FinalDrawCallback::ComputeRGBImage
 #endif // SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
 osaOSGCamera::osaOSGCamera( osaOSGWorld* world,
-				bool trackball,
-				bool offscreenrendering ) : 
-  //mtsTaskContinuous( name ),
+			    bool trackball,
+			    const vctFrame4x4<double>& Rtoffset,
+			    bool offscreenrendering ) : 
   osgViewer::Viewer(),
+  Rtoffset( Rtoffset ),
   offscreenrendering( offscreenrendering ){
   
   // Add a timeout as it can take time to load the windows
@@ -387,7 +388,8 @@ void osaOSGCamera::UpdateTransform()
 
 // This is called from the MTS thread
 void osaOSGCamera::SetTransform( const vctFrame4x4<double>& Rt ){
-  vctFrame4x4<double> Rti( Rt );
+
+  vctFrame4x4<double> Rti( Rt * Rtoffset );
   Rti.InverseSelf();
   vctMatrixRotation3<double> Ri( Rti.Rotation() );
   vctQuaternionRotation3<double> qi( Ri );

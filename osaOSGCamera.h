@@ -28,6 +28,9 @@ class CISST_EXPORT osaOSGCamera : public osgViewer::Viewer{
 
  private:
 
+  //! 
+  vctFrame4x4<double> Rtoffset;
+
   //! Flag for offscreen rendering
   bool offscreenrendering;
 
@@ -209,8 +212,9 @@ class CISST_EXPORT osaOSGCamera : public osgViewer::Viewer{
      \param offscreenrendering Render in p-buffer
   */
   osaOSGCamera( osaOSGWorld* world,
-		  bool trackball = true,
-		  bool offscreenrendering = false );
+		bool trackball = true,
+		const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>(),
+		bool offscreenrendering = false );
 
   ~osaOSGCamera();
 

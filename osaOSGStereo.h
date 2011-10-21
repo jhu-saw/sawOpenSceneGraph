@@ -44,11 +44,12 @@ class CISST_EXPORT osaOSGStereo : public osaOSGCamera {
      \param trackball Use the default trackball
   */
   osaOSGStereo( osaOSGWorld* world,
-		  int x, int y, int width, int height,
-		  double fovy, double aspectRatio,
-		  double zNear, double zFar,
-		  double baseline,
-		  bool trackball = true );
+		int x, int y, int width, int height,
+		double fovy, double aspectRatio,
+		double zNear, double zFar,
+		double baseline,
+		bool trackball = true,
+		const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>() );
   ~osaOSGStereo( );
 
   void Initialize();

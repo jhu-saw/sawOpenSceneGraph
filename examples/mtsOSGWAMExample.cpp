@@ -1,9 +1,11 @@
+#include <cisstCommon/cmnGetChar.h>
+
 #include <cisstMultiTask/mtsTaskManager.h>
 #include <cisstMultiTask/mtsTaskPeriodic.h>
 #include <cisstMultiTask/mtsInterfaceRequired.h>
 
 #include <sawOpenSceneGraph/osaOSGWorld.h>
-#include <sawOpenSceneGraph/osaOSGMono.h>
+#include <sawOpenSceneGraph/mtsOSGMono.h>
 #include <sawOpenSceneGraph/mtsOSGManipulator.h>
 
 class WAMMotion : public mtsTaskPeriodic {
@@ -65,14 +67,31 @@ int main(){
   int x = 0, y = 0;
   int width = 320, height = 240;
   double Znear = 0.1, Zfar = 10.0;
-  osg::ref_ptr< osaOSGCamera > camera;
-  camera = new osaOSGMono( world,
-			     x, y, width, height,
-			     55.0, ((double)width)/((double)height),
-			     Znear, Zfar );
-  camera->Initialize();
+  mtsOSGMono* worldcamera;
+  worldcamera = new mtsOSGMono( "WorldCamera",
+			        world,
+				x, y, width, height,
+				55.0, ((double)width)/((double)height),
+				Znear, Zfar );
+  worldcamera->Configure();
+  taskManager->AddComponent( worldcamera );
 
+
+  vctFrame4x4<double> Rt7cam( vctMatrixRotation3<double>( -1.0,  0.0,  0.0,
+							  0.0,  1.0,  0.0,
+							  0.0,  0.0, -1.0 ),
+			      vctFixedSizeVector<double,3>(0.0) );
+  mtsOSGMono* WAMcamera;
+  WAMcamera = new mtsOSGMono( "WAMCamera",
+			      world,
+			      x, y, width, height,
+			      55.0, ((double)width)/((double)height),
+			      Znear, Zfar, false, Rt7cam );
+  WAMcamera->Configure();
+  taskManager->AddComponent( WAMcamera );
   
+
+
   std::string path( CISST_SOURCE_ROOT"/cisst/etc/cisstRobot/WAM/" );
   vctFrame4x4<double> Rtw0;
   
@@ -102,6 +121,8 @@ int main(){
 
   taskManager->Connect( motion.GetName(), "Input",  WAM->GetName(), "Output" );
   taskManager->Connect( motion.GetName(), "Output", WAM->GetName(), "Input" );
+  taskManager->Connect( WAM->GetName(),    "Output", 
+			WAMcamera->GetName(), "Input" );
 
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
@@ -109,9 +130,7 @@ int main(){
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
-  std::cout << "ESC to quit" << std::endl;
-  while( !camera->done() )
-    { camera->frame(); }
+  cmnGetChar();
 
   taskManager->KillAll();
   taskManager->Cleanup();

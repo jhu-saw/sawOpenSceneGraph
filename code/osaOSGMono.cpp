@@ -2,12 +2,13 @@
 #include <cisstOSAbstraction/osaSleep.h>
 
 osaOSGMono::osaOSGMono( osaOSGWorld* world,
-			    int x, int y, int width, int height,
-			    double fovy, double aspectRatio,
-			    double zNear, double zFar,
-			    bool trackball,
-			    bool offscreenrendering ) :
-  osaOSGCamera( world, trackball, offscreenrendering ),
+			int x, int y, int width, int height,
+			double fovy, double aspectRatio,
+			double zNear, double zFar,
+			bool trackball,
+			const vctFrame4x4<double>& Rtoffset,
+			bool offscreenrendering ) :
+  osaOSGCamera( world, trackball, Rtoffset, offscreenrendering ),
   x( x ),                              // x position
   y( y ),                              // y position
   width( width ),                      // width of images
