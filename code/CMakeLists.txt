@@ -90,7 +90,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
 	${OpenCV2_LIBRARIES} )
     endif( OpenCV2_FOUND )
 
-    include_directories( ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
+    include_directories( ${CISST_INCLUDE_DIR} ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
 
     add_library( sawOpenSceneGraph ${HEADER_FILES} ${SOURCE_FILES} )
 
