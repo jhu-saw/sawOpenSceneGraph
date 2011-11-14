@@ -24,7 +24,7 @@ int main(){
   camera->Initialize();
   
   // Create the objects
-  std::string path( CISST_SOURCE_ROOT"/cisst/etc/cisstRobot/objects/" );
+  std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
 
   vctFrame4x4<double> Rt(  vctMatrixRotation3<double>(),
 			   vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );

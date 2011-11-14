@@ -35,7 +35,7 @@ int main(){
   camera->addEventHandler( new MyPick() );
 
   // Create objects
-  std::string data( CISST_SOURCE_ROOT"/cisst/etc/cisstRobot/objects/" );
+  std::string data( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
   vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
 			  vctFixedSizeVector<double,3>(0.0, 0.0, 0.5) );
 

@@ -92,7 +92,7 @@ int main(){
   
 
 
-  std::string path( CISST_SOURCE_ROOT"/cisst/etc/cisstRobot/WAM/" );
+  std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/WAM/" );
   vctFrame4x4<double> Rtw0;
   
   std::vector< std::string > models;
