@@ -78,7 +78,7 @@ public:
 
     Rt.Position() = Rtwh;
     theta += 0.001;
-
+    
   }
   
   void Cleanup(){}
@@ -129,13 +129,12 @@ int main(){
   osg::ref_ptr< osaOSGBody > background;
   background = new osaOSGBody( path+"background.3ds", world, 
 				 vctFrame4x4<double>() );
-
+  
   taskManager->Connect( camera->GetName(), "Input",
-			cmotion.GetName(), "Output" );
+  			cmotion.GetName(), "Output" );
 
   taskManager->Connect( hubble->GetName(), "Input",
 			hmotion.GetName(), "Output" );
-
 
 
   taskManager->CreateAll();
@@ -144,6 +143,7 @@ int main(){
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
+  cmnGetChar();
   std::cout << "ENTER to quit" << std::endl;
   cmnGetChar();
 

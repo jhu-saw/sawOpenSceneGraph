@@ -53,7 +53,7 @@ mtsOSGCameraTask::mtsOSGCameraTask( const std::string& name,
 }
 
 void mtsOSGCameraTask::Startup(){ 
-
+  
   // This must be done in the thread context
   camera->Initialize();
 
@@ -73,13 +73,14 @@ void mtsOSGCameraTask::Startup(){
   camera->getCamera()->setUpdateCallback( mtscb );
 
 }
-#include <cisstOSAbstraction/osaSleep.h>
 
 void mtsOSGCameraTask::Run(){
   ProcessQueuedCommands();
 
-  if( !camera->done() )
-    { camera->frame(); }
+  if( !camera->done() ) { 
+    camera->frame(); 
+  }
+
 }
 
 void mtsOSGCameraTask::Cleanup(){}
@@ -91,7 +92,7 @@ void mtsOSGCameraTask::UpdateTransform(){
     // Get the position of the camera
     prmPositionCartesianGet Rt;
     GetPosition( Rt );
-    
+
     // Set the transformation
     camera->SetTransform( Rt.Position() );
 

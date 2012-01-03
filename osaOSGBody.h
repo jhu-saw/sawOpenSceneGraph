@@ -168,10 +168,10 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
      \param Rt The initial transformation of the body
   */
   osaOSGBody( const std::string& model,
-		osaOSGWorld* world,
-		const vctFrame4x4<double>& Rt,
-		double scale = 1.0,
-		const std::string& option = std::string("") );
+	      osaOSGWorld* world,
+	      const vctFrame4x4<double>& Rt,
+	      double scale = 1.0,
+	      const std::string& option = std::string("") );
 
   //! OSG Body constructor
   /**

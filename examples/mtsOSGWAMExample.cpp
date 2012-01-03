@@ -80,7 +80,7 @@ int main(){
   vctFrame4x4<double> Rt7cam( vctMatrixRotation3<double>( -1.0,  0.0,  0.0,
 							  0.0,  1.0,  0.0,
 							  0.0,  0.0, -1.0 ),
-			      vctFixedSizeVector<double,3>(0.0) );
+			      vctFixedSizeVector<double,3>(0.0, 0.0, 0.1) );
   mtsOSGMono* WAMcamera;
   WAMcamera = new mtsOSGMono( "WAMCamera",
 			      world,
@@ -130,6 +130,7 @@ int main(){
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
+  cmnGetChar();
   cmnGetChar();
 
   taskManager->KillAll();

@@ -108,7 +108,7 @@ int main(){
 			   Znear, Zfar,
 			   false );
   taskManager->AddComponent( camera );
-  
+
   // create the camera motion
   CameraMotion cmotion;
   taskManager->AddComponent( &cmotion );
@@ -135,14 +135,13 @@ int main(){
   taskManager->Connect( hubble->GetName(), "Input",
 			hmotion.GetName(), "Output" );
 
-
-
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
-
+  
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
+  cmnGetChar();
   std::cout << "ENTER to quit" << std::endl;
   cmnGetChar();
 

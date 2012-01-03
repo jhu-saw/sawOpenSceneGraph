@@ -2,6 +2,8 @@
 #include <sawOpenSceneGraph/osaOSGMono.h>
 #include <sawOpenSceneGraph/osaOSGBody.h>
 
+#undef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
+
 int main( int, char** argv ){
 
   cmnLogger::SetMask( CMN_LOG_ALLOW_ALL );

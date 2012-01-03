@@ -1,5 +1,6 @@
 #include <sawOpenSceneGraph/osaOSGMono.h>
 #include <cisstOSAbstraction/osaSleep.h>
+#undef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
 osaOSGMono::osaOSGMono( osaOSGWorld* world,
 			int x, int y, int width, int height,
