@@ -154,14 +154,12 @@ void osaOSGImage::Initialize(){
   // state set
   stateset = new osg::StateSet;
   stateset->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
-
+  
   // create a texture
   geode = new osg::Geode;
-  osg::ref_ptr< osg::Geometry > geom;
-  geom = osg::createTexturedQuadGeometry( osg::Vec3(width/-2.0,height/-2.0,0.0),
-					  osg::Vec3( width, 0.0, 0.0),
-					  osg::Vec3( 0.0, height, 0.0) );
-
+  geom = osg::createTexturedQuadGeometry( osg::Vec3(0.0, 0.0, 0.0 ), //width/-2.0,height/-2.0,0.0),
+					  osg::Vec3( width,  0.0, 0.0 ),
+					  osg::Vec3( 0.0, height, 0.0 ) );
   geode->addDrawable( geom );
   geode->setStateSet( stateset );
 
@@ -170,7 +168,6 @@ void osaOSGImage::Initialize(){
   this->addChild( osgswitch );
   
   SetTransform( transform );
-
 
 }
 

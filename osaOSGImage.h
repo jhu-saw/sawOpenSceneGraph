@@ -97,6 +97,7 @@ class CISST_EXPORT osaOSGImage : public osg::Group {
   osg::ref_ptr<osg::Texture2D> texture;
   osg::ref_ptr<osg::StateSet> stateset;
   osg::ref_ptr<osg::Geode>       geode;
+  osg::ref_ptr<osg::Geometry>     geom;
 
 
   void Initialize();

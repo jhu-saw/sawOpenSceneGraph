@@ -35,6 +35,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     ../osaOSGBH.h
     ../osaOSGBody.h
     ../osaOSGCamera.h
+    ../osaOSGHUD.h
     ../osaOSGImage.h
     ../osaOSGManipulator.h
     ../osaOSGMono.h
@@ -60,6 +61,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
       osaOSGBH.cpp
       osaOSGBody.cpp
       osaOSGCamera.cpp
+      osaOSGHUD.cpp
       osaOSGImage.cpp
       osaOSGManipulator.cpp
       osaOSGMono.cpp
