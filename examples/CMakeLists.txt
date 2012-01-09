@@ -43,6 +43,8 @@ if( cisst_FOUND_AS_REQUIRED AND sawOpenSceneGraph_FOUND )
   add_executable( osaOSGBarrettHandExample  osaOSGBarrettHandExample.cpp )
   add_executable( osaOSGPickExample         osaOSGPickExample.cpp )
 
+  add_executable( osaOSGImageSequenceExample osaOSGImageSequenceExample.cpp )
+
   add_executable( mtsOSGCameraMonoExample   mtsOSGCameraMonoExample.cpp )
   add_executable( mtsOSGCameraStereoExample mtsOSGCameraStereoExample.cpp )
   add_executable( mtsOSGImageSequenceExample mtsOSGImageSequenceExample.cpp )
@@ -58,6 +60,7 @@ if( cisst_FOUND_AS_REQUIRED AND sawOpenSceneGraph_FOUND )
   target_link_libraries( osaOSGWAMExample             ${sawOpenSceneGraph_LIBRARIES} ) 
   target_link_libraries( osaOSGBarrettHandExample     ${sawOpenSceneGraph_LIBRARIES} ) 
   target_link_libraries( osaOSGPickExample            ${sawOpenSceneGraph_LIBRARIES} ) 
+  target_link_libraries( osaOSGImageSequenceExample            ${sawOpenSceneGraph_LIBRARIES} ) 
 
   target_link_libraries( mtsOSGCameraMonoExample      ${sawOpenSceneGraph_LIBRARIES} ) 
   target_link_libraries( mtsOSGCameraStereoExample    ${sawOpenSceneGraph_LIBRARIES} ) 
@@ -74,6 +77,8 @@ if( cisst_FOUND_AS_REQUIRED AND sawOpenSceneGraph_FOUND )
   cisst_target_link_libraries( osaOSGWAMExample          ${REQUIRED_CISST_LIBRARIES} ) 
   cisst_target_link_libraries( osaOSGBarrettHandExample  ${REQUIRED_CISST_LIBRARIES} ) 
   cisst_target_link_libraries( osaOSGPickExample         ${REQUIRED_CISST_LIBRARIES} ) 
+
+  cisst_target_link_libraries( osaOSGImageSequenceExample         ${REQUIRED_CISST_LIBRARIES} ) 
 
   cisst_target_link_libraries( mtsOSGCameraMonoExample   ${REQUIRED_CISST_LIBRARIES} ) 
   cisst_target_link_libraries( mtsOSGCameraStereoExample ${REQUIRED_CISST_LIBRARIES} ) 

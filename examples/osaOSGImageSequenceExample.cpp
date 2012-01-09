@@ -25,7 +25,7 @@ int main( ){
   camera->Initialize();
 
   osg::ref_ptr< osaOSGImage > image;
-  image = new osaOSGImage( 0, 0, 1, 1, world );
+  image = new osaOSGImage( -.5, -.5, 1, 1, world, vctFrame4x4<double>() );
 
   int i=0;
   while( i < 124 ){

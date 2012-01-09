@@ -176,7 +176,7 @@ class CISST_EXPORT osaOSGImage : public osg::Group {
 	       float width, 
 	       float height,
 	       osaOSGWorld* world, 
-	       const vctFrm3& Rt = vctFrm3() );
+	       const vctFrm3& Rt );
 
   ~osaOSGImage();
 
