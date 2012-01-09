@@ -105,3 +105,11 @@ int svlOSGImage::Release()
 void svlOSGImage::UpdateImage(){
 
 }
+
+void svlOSGImage::setNodeMask( osg::Node::NodeMask mask ){
+
+  if( image != NULL ){
+    image->setNodeMask( mask );
+  }
+
+}

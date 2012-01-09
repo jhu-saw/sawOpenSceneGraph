@@ -22,6 +22,8 @@ class CISST_EXPORT svlOSGImage : public svlFilterBase {
 	       osaOSGHUD* hud );
   virtual ~svlOSGImage();
 
+  void setNodeMask( osg::Node::NodeMask mask );
+
  protected:
 
   virtual int Initialize( svlSample* syncInput, svlSample*& syncOutput );

@@ -78,6 +78,8 @@ class CISST_EXPORT mtsOSGCameraTask : public mtsTaskContinuous{
   mtsOSGCameraTask( const std::string& name, osaOSGCamera* camera );
 
 
+  void setCullMask( osg::Node::NodeMask mask );
+
   ~mtsOSGCameraTask(){}
 
   void Startup();

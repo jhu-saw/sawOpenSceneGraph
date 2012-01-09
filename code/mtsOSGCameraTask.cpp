@@ -20,6 +20,8 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstParameterTypes/prmPositionCartesianGet.h>
 #include <cisstCommon/cmnLogger.h>
 
+#include <osg/CullSettings>
+
 // This operator is called during update traversal
 void mtsOSGCameraTask::UpdateCallback::operator()( osg::Node* node, 
 						   osg::NodeVisitor* nv ){
@@ -84,6 +86,17 @@ void mtsOSGCameraTask::Run(){
 }
 
 void mtsOSGCameraTask::Cleanup(){}
+
+void mtsOSGCameraTask::setCullMask( osg::Node::NodeMask mask ){
+
+  int inheritanceMask = 
+    ( osg::CullSettings::ALL_VARIABLES & ~osg::CullSettings::CULL_MASK );
+
+  camera->getCamera()->setInheritanceMask(inheritanceMask);
+  camera->getCamera()->setCullMask( mask );
+
+}
+
 
 // This is called from the mtsOSGCameraTask::UpdateCallback
 void mtsOSGCameraTask::UpdateTransform(){
