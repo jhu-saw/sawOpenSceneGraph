@@ -10,7 +10,6 @@
 #include <sawOpenSceneGraph/mtsOSGMono.h>
 #include <sawOpenSceneGraph/mtsOSGBody.h>
 #include <sawOpenSceneGraph/svlOSGImage.h>
-#include <osgDB/ReadFile>
 
 #include <cisstStereoVision.h>
 
