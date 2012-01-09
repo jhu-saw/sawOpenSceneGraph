@@ -6,19 +6,21 @@ set (REQUIRED_CISST_LIBRARIES
      cisstRobot
      cisstNumerical
      cisstMultiTask
-     cisstParameterTypes)
+     cisstParameterTypes
+     cisstStereoVision )
 
 set(
   REQUIRED_OPENSCENEGRAPH_LIBRARIES
   osgDB 
   osgGA 
   osgViewer
-  osgUtil 
-  osgVolume 
-  osgText )
+  osgText
+  osgUtil )
+#  osgVolume 
+#  osgText )
 
-find_package (cisst REQUIRED ${REQUIRED_CISST_LIBRARIES})
-find_package(OpenSceneGraph COMPONENTS ${REQUIRED_OPENSCENEGRAPH_LIBRARIES} )
+find_package( cisst REQUIRED ${REQUIRED_CISST_LIBRARIES} )
+find_package( OpenSceneGraph COMPONENTS ${REQUIRED_OPENSCENEGRAPH_LIBRARIES} )
 find_package( OpenCV2 )
 
 if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
@@ -46,12 +48,16 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     ../mtsOSGBody.h
 
     ../mtsOSGCameraTask.h
+    ../mtsOSGImage.h
     ../mtsOSGMono.h
     ../mtsOSGStereo.h
 
     ../mtsOSGBH.h
     ../mtsOSGManipulator.h
     ../mtsOSGManipulatorTask.h
+    
+    ../svlOSGImage.h
+
     )
     
     SET(
@@ -72,22 +78,28 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
       mtsOSGBody.cpp
 
       mtsOSGCameraTask.cpp
+      mtsOSGImage.cpp
 
       mtsOSGManipulatorTask.cpp
+
+      svlOSGImage.cpp
+
       )
     
-
+#    message( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
     set( 
       SAW_OPENSCENEGRAPH_INCLUDE_DIRS 
       ${INCLUDE_OUTPUT_PATH} 
       ${OPENSCENEGRAPH_INCLUDE_DIRS} )
     set( SAW_OPENSCENEGRAPH_LINK_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} )
+#    message( ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
 
     if( OpenCV2_FOUND )
       set( 
 	SAW_OPENSCENEGRAPH_INCLUDE_DIRS
-	${SAW_OPENSCENEGRAPH_INCLUDE_DIRS}
-	${OpenCV2_INCLUDE_DIRS} )
+	${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} 
+      ${OpenCV2_INCLUDE_DIRS} )
+
       set( 
 	SAW_OPENSCENEGRAPH_LINK_LIBRARIES
 	${SAW_OPENSCENEGRAPH_LINK_LIBRARIES}

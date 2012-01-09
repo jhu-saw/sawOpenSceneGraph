@@ -35,6 +35,7 @@ void osaOSGImage::TransformCallback::operator()( osg::Node* node,
   // change the transform 
   if( userdata != NULL )
     { userdata->GetImage()->UpdateTransform(); }
+
   traverse( node, nv );
 
 }   
@@ -55,27 +56,17 @@ void osaOSGImage::SwitchCallback::operator()( osg::Node* node,
 }   
 
 
-osaOSGImage::osaOSGImage( size_t width, 
-			  size_t height,
-			  const vctFrame4x4<double>& Rt ):
-
-  transform( Rt ),
-  onoff( SWITCH_ON ),
-  width( width ),
-  height( height ),
-  data( NULL ){
-  
-  Initialize();
-
-}
-
-osaOSGImage::osaOSGImage( size_t width, 
-			  size_t height,
+osaOSGImage::osaOSGImage( float x,
+			  float y,
+			  float width, 
+			  float height,
 			  osaOSGWorld* world,
 			  const vctFrame4x4<double>& Rt ):
 
   transform( Rt ),
   onoff( SWITCH_ON ),
+  x( x ),
+  y( y ),
   width( width ),
   height( height ),
   data( NULL ){
@@ -88,12 +79,39 @@ osaOSGImage::osaOSGImage( size_t width,
 
 }
 
-osaOSGImage::osaOSGImage( size_t width, 
-			  size_t height,
+osaOSGImage::osaOSGImage( float x,
+			  float y, 
+			  float width, 
+			  float height,
+			  osaOSGHUD* hud,
+			  const vctFrame4x4<double>& Rt ):
+
+  transform( Rt ),
+  onoff( SWITCH_ON ),
+  x( x ),
+  y( y ),
+  width( width ),
+  height( height ),
+  data( NULL ){
+  
+  Initialize();
+
+  // Once this is done add the image to the world
+  if( hud != NULL )
+    { hud->addChild( this ); }
+
+}
+
+osaOSGImage::osaOSGImage( float x,
+			  float y, 
+			  float width, 
+			  float height,
 			  osaOSGWorld* world,
 			  const vctFrm3& Rt ):
 
   onoff( SWITCH_ON ),
+  x( x ),
+  y( y ),
   width( width ),
   height( height ),
   data( NULL ){
@@ -112,6 +130,7 @@ osaOSGImage::osaOSGImage( size_t width,
 }
 
 osaOSGImage::~osaOSGImage(){}
+
 
 void osaOSGImage::Initialize(){
 
@@ -139,31 +158,35 @@ void osaOSGImage::Initialize(){
   switchcallback = new osaOSGImage::SwitchCallback;
   osgswitch->setUpdateCallback( switchcallback );
 
-  // create the image attached to the texture
-  image = new osg::Image;
-  image->setPixelBufferObject( new osg::PixelBufferObject( image.get() ) );
+  // create the image
+  osgimage = new osaOSGImage::Image;
+  osgimage->setPixelBufferObject( new osg::PixelBufferObject(osgimage.get()) );
+  osgimage->setUserData( userdata );
 
   // create the texture and attach the image
-  texture = new osg::Texture2D;
-  texture->setFilter( osg::Texture::MIN_FILTER, osg::Texture::LINEAR );
-  texture->setFilter( osg::Texture::MAG_FILTER, osg::Texture::LINEAR );
-  texture->setWrap( osg::Texture::WRAP_R, osg::Texture::REPEAT );
-  texture->setResizeNonPowerOfTwoHint( false );
-  texture->setImage( image.get() );
+  osgtexture = new osg::Texture2D;
+  osgtexture->setFilter( osg::Texture::MIN_FILTER, osg::Texture::LINEAR );
+  osgtexture->setFilter( osg::Texture::MAG_FILTER, osg::Texture::LINEAR );
+  osgtexture->setWrap( osg::Texture::WRAP_R, osg::Texture::REPEAT );
+  osgtexture->setResizeNonPowerOfTwoHint( false );
+  osgtexture->setImage( osgimage.get() );
 
   // state set
-  stateset = new osg::StateSet;
-  stateset->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
+  osgstateset = new osg::StateSet;
+  osgstateset->setTextureAttributeAndModes( 0, 
+					    osgtexture,
+					    osg::StateAttribute::ON );
   
   // create a texture
-  geode = new osg::Geode;
-  geom = osg::createTexturedQuadGeometry( osg::Vec3(0.0, 0.0, 0.0 ), //width/-2.0,height/-2.0,0.0),
-					  osg::Vec3( width,  0.0, 0.0 ),
-					  osg::Vec3( 0.0, height, 0.0 ) );
-  geode->addDrawable( geom );
-  geode->setStateSet( stateset );
+  osggeode = new osg::Geode;
+  osggeom = osg::createTexturedQuadGeometry( osg::Vec3(     x,      y, 0.0 ),
+					     osg::Vec3( width,    0.0, 0.0 ),
+					     osg::Vec3(   0.0, height, 0.0 ) );
 
-  osgtransform->addChild( geode ); 
+  osggeode->addDrawable( osggeom );
+  osggeode->setStateSet( osgstateset );
+
+  osgtransform->addChild( osggeode ); 
   osgswitch->addChild( osgtransform );
   this->addChild( osgswitch );
   
@@ -176,29 +199,37 @@ void osaOSGImage::SetImage( const osg::Image* img ){
   if( img->valid() ){
 
     // if mismatch
-    if( image->s()                        != img->s()                        ||
-	image->t()                        != img->t()                        ||
-	image->r()                        != img->r()                        ||
-	image->getInternalTextureFormat() != img->getInternalTextureFormat() ||
-	image->getPixelFormat()           != img->getPixelFormat()           ||
-	image->getDataType()              != img->getDataType() ){
+    if(osgimage->s()                       !=img->s()                       ||
+       osgimage->t()                       !=img->t()                       ||
+       osgimage->r()                       !=img->r()                       ||
+       osgimage->getInternalTextureFormat()!=img->getInternalTextureFormat()||
+       osgimage->getPixelFormat()          !=img->getPixelFormat()          ||
+       osgimage->getDataType()             !=img->getDataType()){
     
       // clear the data and reset the image
       if( data != NULL ) delete[] data;
       data = new unsigned char[ img->getTotalSizeInBytes() ];
+      /*
+      std::cout << img->s() << " "
+		<< img->t() << " "
+		<< img->r() << " "
+		<< img->getInternalTextureFormat() << " "
+		<< img->getPixelFormat() << " "
+		<< img->getDataType() << std::endl;
+      */
 
-      image->setImage( img->s(),
-		       img->t(),
-		       img->r(), 
-		       img->getInternalTextureFormat(),
-		       img->getPixelFormat(), 
-		       img->getDataType(),
-		       data,
-		       osg::Image::NO_DELETE );
+      osgimage->setImage( img->s(),
+			  img->t(),
+			  img->r(), 
+			  img->getInternalTextureFormat(),
+			  img->getPixelFormat(), 
+			  img->getDataType(),
+			  data,
+			  osg::Image::NO_DELETE );
     }
 
     memcpy( data, img->data(), img->getTotalSizeInBytes() );
-    image->dirty();
+    osgimage->dirty();
 
   }
 

@@ -65,7 +65,7 @@ int main(){
   
   // Create a camera
   int x = 0, y = 0;
-  int width = 320, height = 240;
+  int width = 640, height = 480;
   double Znear = 0.1, Zfar = 10.0;
   mtsOSGMono* worldcamera;
   worldcamera = new mtsOSGMono( "WorldCamera",

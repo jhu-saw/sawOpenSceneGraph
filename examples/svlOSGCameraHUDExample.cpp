@@ -3,9 +3,11 @@
 #include <sawOpenSceneGraph/osaOSGMono.h>
 #include <sawOpenSceneGraph/osaOSGHUD.h>
 #include <sawOpenSceneGraph/osaOSGBody.h>
-#include <sawOpenSceneGraph/osaOSGImage.h>
+#include <sawOpenSceneGraph/svlOSGImage.h>
 #include <osgText/Text>
-#undef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
+
+#include <cisstStereoVision.h>
+
 
 int main( int, char** argv ){
 
@@ -35,52 +37,36 @@ int main( int, char** argv ){
 
   osg::ref_ptr< osaOSGBody > background;
   background = new osaOSGBody( path+"background.3ds", world, 
-  			       vctFrame4x4<double>() );
+ 			       vctFrame4x4<double>() );
   osg::ref_ptr< osaOSGBody > hubble;
   hubble = new osaOSGBody( path+"hst.3ds", world, Rt );
   
-
   osg::ref_ptr< osaOSGHUD > hud;
   hud = new osaOSGHUD( world, width, height, camera );
 
-  osg::ref_ptr< osaOSGImage > image;
-  image = new osaOSGImage( 0, 0, width, height, hud );
-  hud->addChild( hubble);
+  //osg::ref_ptr< osaOSGImage > image;
+  //image = new osaOSGImage( 0, 0, width, height, hud );
 
-  std::cout << "ESC to quit" << std::endl;
+  svlInitialize();
 
-  // animate and render
-  int i=0;
-  double theta=1.0;
+  // Creating SVL objects
+  svlStreamManager stream;
+  svlOSGImage imageseq( 0, 0, width, height, hud );
 
-  while( !camera->done() ){
-
-    // rotate hubble
-    vctFixedSizeVector<double,3> u( 0.0, 0.0, 1.0 );
-    vctAxisAngleRotation3<double> Rwh( u, theta );
-    vctFrame4x4<double> Rtwh(  Rwh,
-			       vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
-    hubble->SetTransform( Rtwh );
-
-    // zoom out the camera
-    vctFrame4x4<double> Rtwc( vctMatrixRotation3<double>(),
-			      vctFixedSizeVector<double,3>(0.0, 0.0, theta ));
-    camera->SetTransform( Rtwc );
+  svlFilterSourceVideoFile source(1);
+  source.SetFilePath( "xray.avi" );
 
 
-    char buffer[128];
-    sprintf( buffer, "walkstraight/frame%04d.tif", i++ );
+  stream.SetSourceFilter( &source );
+  source.GetOutput()->Connect( imageseq.GetInput() );
 
-    if( i < 124 )
-      image->SetImage( std::string( buffer ) );
-    if( i == 124 ) i = 0;
-    camera->frame();
-    
-    theta += 0.001;
-    
-    osaSleep( 1.0/30.0 );
+  if (stream.Play() != SVL_OK)
+    std::cout <<"error"<<std::endl;
 
-  }
+  while( 1 )
+    { camera->frame(); }
+
+  pause();
 
   return 0;
 

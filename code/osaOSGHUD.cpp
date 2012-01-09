@@ -13,8 +13,8 @@ osaOSGHUD::osaOSGHUD( osaOSGWorld* world,
     setRenderOrder( osg::Camera::NESTED_RENDER );
     setClearMask( GL_DEPTH_BUFFER_BIT );
     
-    //getOrCreateStateSet()->setMode( GL_LIGHTING, GL_FALSE );
-    //getOrCreateStateSet()->setMode( GL_DEPTH_TEST, GL_FALSE );
+    getOrCreateStateSet()->setMode( GL_LIGHTING, GL_FALSE );
+    getOrCreateStateSet()->setMode( GL_DEPTH_TEST, GL_FALSE );
     
     // don't capture events
     setAllowEventFocus(false);

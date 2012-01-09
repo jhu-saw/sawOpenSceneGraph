@@ -30,6 +30,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstVector/vctTransformationTypes.h>
 
 #include <sawOpenSceneGraph/osaOSGWorld.h>
+#include <sawOpenSceneGraph/osaOSGHUD.h>
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
 
 class CISST_EXPORT osaOSGImage : public osg::Group {
@@ -50,7 +51,7 @@ class CISST_EXPORT osaOSGImage : public osg::Group {
     UserData( osaOSGImage* imgseq ) : imagesequence( imgseq ){}
     osaOSGImage* GetImage() { return imagesequence; }
   };
-  osg::ref_ptr<UserData> userdata;
+  osg::ref_ptr<osg::Referenced> userdata;
 
   // This is used to update the position of the image
   class TransformCallback : public osg::NodeCallback {    
@@ -70,6 +71,8 @@ class CISST_EXPORT osaOSGImage : public osg::Group {
   // The osg transform
   osg::ref_ptr<osg::MatrixTransform> osgtransform;
 
+
+
   // This is used to update the position of the image
   class SwitchCallback : public osg::NodeCallback {    
   public:
@@ -88,59 +91,92 @@ class CISST_EXPORT osaOSGImage : public osg::Group {
   // The switch
   osg::ref_ptr< osg::Switch> osgswitch;
 
- public:
+ protected:
 
-  //osg::ref_ptr<osg::Image> imagesequence;
-  size_t width, height;
-  unsigned char*                data;
-  osg::ref_ptr<osg::Image>      image;
-  osg::ref_ptr<osg::Texture2D> texture;
-  osg::ref_ptr<osg::StateSet> stateset;
-  osg::ref_ptr<osg::Geode>       geode;
-  osg::ref_ptr<osg::Geometry>     geom;
+  // in order for the image to update itself at each traversal we need to
+  // a new class and overloads the following methods
+  class Image : public osg::Image {
 
+    bool requiresUpdateCall() const { return true; }
+
+    void update( osg::NodeVisitor* ){ 
+      osg::Referenced* data = getUserData();
+      osaOSGImage::UserData* userdata;
+      userdata = dynamic_cast<osaOSGImage::UserData*>( data );
+
+      // update the image
+      if( userdata != NULL )
+	{ userdata->GetImage()->UpdateImage(); }
+    }
+
+  };
+  
+
+  float x, y;
+  float width, height;
+  unsigned char*                     data;
+  osg::ref_ptr<osg::Image>       osgimage;
+  osg::ref_ptr<osg::Texture2D> osgtexture;
+  osg::ref_ptr<osg::StateSet> osgstateset;
+  osg::ref_ptr<osg::Geode>       osggeode;
+  osg::ref_ptr<osg::Geometry>     osggeom;
 
   void Initialize();
 
+  virtual void UpdateImage(){}
+
  public: 
 
-  static const vctFixedSizeVector<unsigned char,3> RGBDEFAULT;
-
   //! OSG Image constructor
   /**
      Create a OSG image.
-     \param width The width of the rendered geode (not of the image in pixels)
-     \param height The height of the rendered geode (not of the image in pixels)
-     \param Rt The initial transformation of the image
-  */
-  osaOSGImage( size_t width, size_t height, const vctFrame4x4<double>& Rt );
-
-
-  //! OSG Image constructor
-  /**
-     Create a OSG image.
+     \param x The horizontal position of the image
+     \param y The vertical position of the image
      \param width The width of the rendered geode (not of the image in pixels)
      \param height The height of the rendered geode (not of the image in pixels)
      \param world The OSG world the image belongs to
      \param Rt The initial transformation of the image
   */
-  osaOSGImage( size_t width, 
-	       size_t height,
+  osaOSGImage( float x,
+	       float y, 
+	       float width, 
+	       float height,
 	       osaOSGWorld* world, 
-	       const vctFrame4x4<double>& Rt );
+	       const vctFrame4x4<double>& Rt = vctFrame4x4<double>() );
 
   //! OSG Image constructor
   /**
      Create a OSG image.
+     \param x The horizontal position of the image
+     \param y The vertical position of the image
+     \param width The width of the rendered geode (not of the image in pixels)
+     \param height The height of the rendered geode (not of the image in pixels)
+     \param hud The OSG HUD the image belongs to
+     \param Rt The initial transformation of the image
+  */
+  osaOSGImage( float x,
+	       float y, 
+	       float width, 
+	       float height,
+	       osaOSGHUD* hud, 
+	       const vctFrame4x4<double>& Rt = vctFrame4x4<double>() );
+
+  //! OSG Image constructor
+  /**
+     Create a OSG image.
+     \param x The horizontal position of the image
+     \param y The vertical position of the image
      \param width The width of the rendered geode (not of the image in pixels)
      \param height The height of the rendered geode (not of the image in pixels)
      \param world The OSG world the image belongs to
      \param Rt The initial transformation of the image
   */
-  osaOSGImage( size_t width, 
-	       size_t height,
+  osaOSGImage( float x,
+	       float y, 
+	       float width, 
+	       float height,
 	       osaOSGWorld* world, 
-	       const vctFrm3& Rt );
+	       const vctFrm3& Rt = vctFrm3() );
 
   ~osaOSGImage();
 
