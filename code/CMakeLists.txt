@@ -1,3 +1,16 @@
+#
+# $Id$
+#
+# (C) Copyright 2012 Johns Hopkins University (JHU), All Rights
+# Reserved.
+#
+# --- begin cisst license - do not edit ---
+#
+# This software is provided "as is" under an open source license, with
+# no warranty.  The complete license can be found in license.txt and
+# http://www.cisst.org/cisst/license.txt.
+#
+# --- end cisst license ---
 
 set (REQUIRED_CISST_LIBRARIES
      cisstCommon
@@ -11,12 +24,12 @@ set (REQUIRED_CISST_LIBRARIES
 
 set(
   REQUIRED_OPENSCENEGRAPH_LIBRARIES
-  osgDB 
-  osgGA 
+  osgDB
+  osgGA
   osgViewer
   osgText
   osgUtil )
-#  osgVolume 
+#  osgVolume
 #  osgText )
 
 find_package( cisst REQUIRED ${REQUIRED_CISST_LIBRARIES} )
@@ -25,14 +38,16 @@ find_package( OpenCV2 )
 
 if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
 
+  include (${CISST_USE_FILE})
+
   if( OpenCV2_FOUND )
     set( SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV ON )
     mark_as_advanced( FORCE ${OpenCV2_OPTIONS})
   endif( OpenCV2_FOUND )
-  
-  SET( 
-    HEADER_FILES 
-    ${HEADER_FILES} 
+
+  SET(
+    HEADER_FILES
+    ${HEADER_FILES}
 
     ../osaOSGBH.h
     ../osaOSGBody.h
@@ -44,7 +59,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     ../osaOSGPick.h
     ../osaOSGStereo.h
     ../osaOSGWorld.h
-    
+
     ../mtsOSGBody.h
 
     ../mtsOSGCameraTask.h
@@ -55,14 +70,14 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     ../mtsOSGBH.h
     ../mtsOSGManipulator.h
     ../mtsOSGManipulatorTask.h
-    
+
     ../svlOSGImage.h
 
     )
-    
+
     SET(
       SOURCE_FILES
-      ${SOURCE_FILES} 
+      ${SOURCE_FILES}
 
       osaOSGBH.cpp
       osaOSGBody.cpp
@@ -85,22 +100,22 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
       svlOSGImage.cpp
 
       )
-    
+
 #    message( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
-    set( 
-      SAW_OPENSCENEGRAPH_INCLUDE_DIRS 
-      ${INCLUDE_OUTPUT_PATH} 
+    set(
+      SAW_OPENSCENEGRAPH_INCLUDE_DIRS
+      ${INCLUDE_OUTPUT_PATH}
       ${OPENSCENEGRAPH_INCLUDE_DIRS} )
     set( SAW_OPENSCENEGRAPH_LINK_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} )
 #    message( ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
 
     if( OpenCV2_FOUND )
-      set( 
+      set(
 	SAW_OPENSCENEGRAPH_INCLUDE_DIRS
-	${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} 
+	${SAW_OPENSCENEGRAPH_INCLUDE_DIRS}
       ${OpenCV2_INCLUDE_DIRS} )
 
-      set( 
+      set(
 	SAW_OPENSCENEGRAPH_LINK_LIBRARIES
 	${SAW_OPENSCENEGRAPH_LINK_LIBRARIES}
 	${OpenCV2_LIBRARIES} )
@@ -110,22 +125,22 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
 
     add_library( sawOpenSceneGraph ${HEADER_FILES} ${SOURCE_FILES} )
 
-    target_link_libraries( 
-      sawOpenSceneGraph 
+    target_link_libraries(
+      sawOpenSceneGraph
       ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
 
     cisst_target_link_libraries( sawOpenSceneGraph ${REQUIRED_CISST_LIBRARIES} )
 
-    set( 
-      sawOpenSceneGraph_INCLUDE_DIR 
-      "${sawComponents_SOURCE_DIR}" 
+    set(
+      sawOpenSceneGraph_INCLUDE_DIR
+      "${sawComponents_SOURCE_DIR}"
       "${sawComponents_BINARY_DIR}"
       ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
 
     set(sawOpenSceneGraph_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
-    set( 
-      sawOpenSceneGraph_LIBRARIES 
-      sawOpenSceneGraph 
+    set(
+      sawOpenSceneGraph_LIBRARIES
+      sawOpenSceneGraph
       ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
 
     configure_file (
@@ -138,7 +153,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
       "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
       @ONLY)
 
-    mark_as_advanced( 
+    mark_as_advanced(
       OPENTHREADS_INCLUDE_DIR
       OPENTHREADS_LIBRARY
       OPENTHREADS_LIBRARY_DEBUG
