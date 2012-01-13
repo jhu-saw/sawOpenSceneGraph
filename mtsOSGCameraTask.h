@@ -27,8 +27,7 @@ http://www.cisst.org/cisst/license.txt.
 
 class CISST_EXPORT mtsOSGCameraTask : public mtsTaskContinuous{
   
- private:
-
+private:
   osg::ref_ptr<osaOSGCamera> camera;
 
   //! The input interface
@@ -85,6 +84,10 @@ class CISST_EXPORT mtsOSGCameraTask : public mtsTaskContinuous{
   void Startup();
   void Run();
   void Cleanup();
+
+  inline osg::ref_ptr<osaOSGCamera> GetCamera(void) {
+      return camera;
+  }
 
 };
 
