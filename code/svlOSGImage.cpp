@@ -102,9 +102,7 @@ int svlOSGImage::Release()
 { return SVL_OK; }
 
 
-void svlOSGImage::UpdateImage(){
-
-}
+void svlOSGImage::UpdateImage(){}
 
 void svlOSGImage::setNodeMask( osg::Node::NodeMask mask ){
 

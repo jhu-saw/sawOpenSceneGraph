@@ -6,22 +6,51 @@ osaOSGHUD::osaOSGHUD( osaOSGWorld* world,
 		      osaOSGCamera* camera ){
   
   if( world != NULL && camera != NULL ){
-    // Set the intrinsic paramters
-    setProjectionMatrixAsOrtho2D( 0, width, 0, height );
-    setViewMatrix( osg::Matrix::identity() );
-    setReferenceFrame( osg::Camera::ABSOLUTE_RF );
-    setRenderOrder( osg::Camera::NESTED_RENDER );
-    setClearMask( GL_DEPTH_BUFFER_BIT );
-    
-    getOrCreateStateSet()->setMode( GL_LIGHTING, GL_FALSE );
-    getOrCreateStateSet()->setMode( GL_DEPTH_TEST, GL_FALSE );
-    
-    // don't capture events
-    setAllowEventFocus(false);
-    
-    // render this camera in the same viewport as the other camera
-    osgViewer::Viewer::Windows windows;
-    camera->getWindows(windows);
+
+    Initialize( (osg::Node*)world, 
+		width, height, 
+		(osgViewer::Viewer*)camera );
+
+  }
+
+}
+
+osaOSGHUD::osaOSGHUD( osaOSGWorld* world,
+		      int width, int height,
+		      mtsOSGCameraTask* camera ){
+  
+  if( world != NULL && camera != NULL ){
+
+    Initialize( (osg::Node*)world, 
+		width, height, 
+		(osgViewer::Viewer*)camera->camera);
+
+  }
+
+}
+
+void osaOSGHUD::Initialize( osg::Node* world, 
+			    int width, int height, 
+			    osgViewer::Viewer* viewer ){
+
+  // Set the intrinsic paramters
+  setProjectionMatrixAsOrtho2D( 0, width, 0, height );
+  setViewMatrix( osg::Matrix::identity() );
+  setReferenceFrame( osg::Camera::ABSOLUTE_RF );
+  setRenderOrder( osg::Camera::NESTED_RENDER );
+  setClearMask( GL_DEPTH_BUFFER_BIT );
+  
+  getOrCreateStateSet()->setMode( GL_LIGHTING, GL_FALSE );
+  getOrCreateStateSet()->setMode( GL_DEPTH_TEST, GL_FALSE );
+  
+  // don't capture events
+  setAllowEventFocus(false);
+  
+  // render this camera in the same viewport as the other camera
+  osgViewer::Viewer::Windows windows;
+  viewer->getWindows(windows);
+  
+  if( !windows.empty() ){
     
     setGraphicsContext( windows[0] );
     setViewport( windows[0]->getTraits()->x,
@@ -40,9 +69,10 @@ osaOSGHUD::osaOSGHUD( osaOSGWorld* world,
     group->addChild(two);
     group->getOrCreateStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
     two->getOrCreateStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);
-    camera->setSceneData( group.get() );
+    viewer->setSceneData( group.get() );
   }
-
+  else
+    { std::cout << "Invalid context"<<std::endl;}
 }
 
 osaOSGHUD::~osaOSGHUD(){}

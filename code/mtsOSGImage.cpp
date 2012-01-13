@@ -55,7 +55,7 @@ mtsOSGImage::mtsOSGImage( const std::string& name,
 }
 
 void mtsOSGImage::UpdateImage(){
-
+  
   if( GetImage.IsValid() ){
 
     // Get the position of the camera

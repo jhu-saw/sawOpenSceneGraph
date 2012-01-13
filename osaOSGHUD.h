@@ -7,6 +7,7 @@
 
 #include <cisstVector/vctDynamicNArray.h>
 #include <sawOpenSceneGraph/osaOSGCamera.h>
+#include <sawOpenSceneGraph/mtsOSGCameraTask.h>
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
 
 
@@ -16,6 +17,9 @@ class CISST_EXPORT osaOSGHUD : public osg::Camera {
 
   osg::ref_ptr<osg::Group> group;
 
+  void Initialize( osg::Node* root, 
+		   int width, int height, 
+		   osgViewer::Viewer* windows );
 
  public : 
 
@@ -29,6 +33,9 @@ class CISST_EXPORT osaOSGHUD : public osg::Camera {
      \param width The width of the camera image
   */
   osaOSGHUD( osaOSGWorld* world, int width, int height, osaOSGCamera* camera );
+  osaOSGHUD( osaOSGWorld* world, 
+	     int width, int height,
+	     mtsOSGCameraTask* camera );
   
   ~osaOSGHUD();
 

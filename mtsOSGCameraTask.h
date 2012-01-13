@@ -26,8 +26,11 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
 
 class CISST_EXPORT mtsOSGCameraTask : public mtsTaskContinuous{
+
+  friend class osaOSGHUD;
   
 private:
+
   osg::ref_ptr<osaOSGCamera> camera;
 
   //! The input interface
@@ -85,9 +88,8 @@ private:
   void Run();
   void Cleanup();
 
-  inline osg::ref_ptr<osaOSGCamera> GetCamera(void) {
-      return camera;
-  }
+  inline osg::ref_ptr<osaOSGCamera> GetCamera(void) 
+  { return camera; }
 
 };
 
