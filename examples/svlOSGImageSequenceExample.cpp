@@ -70,24 +70,27 @@ int main( ){
   int x = 0, y = 0;
   int width = 640, height = 480;
   double Znear = 0.1, Zfar = 10.0;
+
   mtsOSGMono* cameraleft;
+  osg::Node::NodeMask maskleft = 0x01;
   cameraleft = new mtsOSGMono( "cameraleft", 
 			       world,
 			       x, y, 
 			       width, height,
 			       55.0, ((double)width)/((double)height),
 			       Znear, Zfar );
-  cameraleft->setCullMask( 0x01 );
+  cameraleft->setCullMask( maskleft );
   taskManager->AddComponent( cameraleft );
 
   mtsOSGMono* cameraright;
+  osg::Node::NodeMask maskright = 0x02;
   cameraright = new mtsOSGMono( "cameraright", 
-			       world,
-			       x, y, 
-			       width, height,
-			       55.0, ((double)width)/((double)height),
-			       Znear, Zfar );
-  cameraright->setCullMask( 0x02 );
+				world,
+				x, y, 
+				width, height,
+				55.0, ((double)width)/((double)height),
+				Znear, Zfar );
+  cameraright->setCullMask( maskright );
   taskManager->AddComponent( cameraright );
 
 
@@ -105,45 +108,53 @@ int main( ){
   hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt );
   taskManager->AddComponent( hubble.get() );
 
+
   // connect the motion to hubble
   taskManager->Connect( hubble->GetName(), "Input",
 			hmotion.GetName(), "Output" );
 
 
+
+
+
   // Start the svl stuff
   svlInitialize();
 
+
   // Creating SVL objects
   svlStreamManager streamleft;
-  svlFilterSourceVideoFile sourceleft(1);
+  svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( -0.5, -0.5, 1, 1, world );
 
 
   svlStreamManager streamright; 
-  svlFilterSourceVideoFile sourceright(1);
+  svlFilterSourceVideoCapture sourceright(1); 
   svlOSGImage imageright( -0.5, -0.5, 1, 1, world );
 
 
-  sourceleft.SetFilePath( "traffic.avi" );
-  imageleft.setNodeMask( 0x01 );
+  // Configure the filters
+  sourceleft.DialogSetup();
+  imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
   
-
-  sourceright.SetFilePath( "xray.avi" );
-  imageright.setNodeMask( 0x02 );
+  sourceright.DialogSetup();
+  imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
   sourceright.GetOutput()->Connect( imageright.GetInput() );
 
 
+  // start the streams
   if (streamleft.Play() != SVL_OK)
     std::cout <<"error"<<std::endl;
 
   if (streamright.Play() != SVL_OK)
     std::cout <<"error"<<std::endl;
 
+
+  // start the components
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
   

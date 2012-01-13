@@ -70,24 +70,27 @@ int main( int, char** argv ){
   int x = 0, y = 0;
   int width = 640, height = 480;
   double Znear = 0.1, Zfar = 10.0;
+
   osaOSGMono* cameraleft;
+  osg::Node::NodeMask maskleft = 0x01;
   cameraleft = new osaOSGMono( world,
 			       x, y, 
 			       width, height,
 			       55.0, ((double)width)/((double)height),
 			       Znear, Zfar );
   cameraleft->Initialize();
-  cameraleft->setCullMask( 0x01 );
+  cameraleft->setCullMask( maskleft );
 
   
   osaOSGMono* cameraright;
+  osg::Node::NodeMask maskright = 0x02;
   cameraright = new osaOSGMono( world,
 				x, y, 
 				width, height,
 				55.0, ((double)width)/((double)height),
 				Znear, Zfar );
   cameraright->Initialize();
-  cameraright->setCullMask( 0x02 );
+  cameraright->setCullMask( maskright );
   
 
   // HUD
@@ -126,24 +129,24 @@ int main( int, char** argv ){
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  svlFilterSourceVideoFile sourceleft(1);
+  svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( 0, 0, width, height, hudleft );
 
   
   svlStreamManager streamright; 
-  svlFilterSourceVideoFile sourceright(1);
+  svlFilterSourceVideoCapture sourceright(1); 
   svlOSGImage imageright( 0, 0, width, height, hudright );
   
 
-  sourceleft.SetFilePath( "traffic.avi" );
-  imageleft.setNodeMask( 0x01 );
+  sourceleft.DialogSetup();
+  imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
   
   
-  sourceright.SetFilePath( "xray.avi" );
-  imageright.setNodeMask( 0x02 );
+  sourceright.DialogSetup();
+  imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
   sourceright.GetOutput()->Connect( imageright.GetInput() );
