@@ -107,30 +107,21 @@ int main( ){
   osg::ref_ptr< mtsOSGBody > hubble;
   hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt );
   taskManager->AddComponent( hubble.get() );
-
+  
 
   // connect the motion to hubble
   taskManager->Connect( hubble->GetName(), "Input",
-			hmotion.GetName(), "Output" );
-
-
+  			hmotion.GetName(), "Output" );
 
 
 
   // Start the svl stuff
   svlInitialize();
 
-
   // Creating SVL objects
   svlStreamManager streamleft;
   svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( -0.5, -0.5, 1, 1, world );
-
-
-  svlStreamManager streamright; 
-  svlFilterSourceVideoCapture sourceright(1); 
-  svlOSGImage imageright( -0.5, -0.5, 1, 1, world );
-
 
   // Configure the filters
   sourceleft.DialogSetup();
@@ -138,32 +129,38 @@ int main( ){
 
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
-  
+
+  // start the streams
+  if (streamleft.Play() != SVL_OK)
+    std::cout <<"error"<<std::endl;
+
+  svlStreamManager streamright; 
+  svlFilterSourceVideoCapture sourceright(1); 
+  svlOSGImage imageright( -0.5, -0.5, 1, 1, world );
+  svlFilterImageWindow windowleft, windowright;
+
   sourceright.DialogSetup();
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
   sourceright.GetOutput()->Connect( imageright.GetInput() );
 
-
-  // start the streams
-  if (streamleft.Play() != SVL_OK)
-    std::cout <<"error"<<std::endl;
-
   if (streamright.Play() != SVL_OK)
     std::cout <<"error"<<std::endl;
-
 
   // start the components
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
-  
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
-
+  std::cout << "1" << std::endl;
   cmnGetChar();
+  std::cout << "2" << std::endl;
   cmnGetChar();
+  std::cout << "3" << std::endl;
+  cmnGetChar();
+  std::cout << "4" << std::endl;
 
   return 0;
 

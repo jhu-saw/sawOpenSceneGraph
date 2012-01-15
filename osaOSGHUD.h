@@ -15,11 +15,16 @@ class CISST_EXPORT osaOSGHUD : public osg::Camera {
 
  private:
 
-  osg::ref_ptr<osg::Group> group;
+  osg::ref_ptr<osaOSGWorld> world;
+  osg::ref_ptr<osgViewer::Viewer> viewer;
+  int width;
+  int height;
+    
 
-  void Initialize( osg::Node* root, 
+  bool initialized;
+  void Initialize( osg::Node* root,
 		   int width, int height, 
-		   osgViewer::Viewer* windows );
+		   osgViewer::Viewer* viewer );
 
  public : 
 
@@ -39,12 +44,16 @@ class CISST_EXPORT osaOSGHUD : public osg::Camera {
   
   ~osaOSGHUD();
 
+  void Initialize()
+  { if( !initialized ){ Initialize( world, width, height, viewer ); } }
+
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
  public:
 
   osaOSGCamera::Errno GetRangeData( vctDynamicMatrix<double>& rangedata );
-  osaOSGCamera::Errno GetRGBPlanarImage( vctDynamicNArray<unsigned char,3>& rgb );
+  osaOSGCamera::Errno GetRGBPlanarImage(vctDynamicNArray<unsigned char,3>& rgb);
+
   osaOSGCamera::Errno GetRGBImage( cv::Mat& rgb );
   osaOSGCamera::Errno GetDepthImage( cv::Mat& depth );
 

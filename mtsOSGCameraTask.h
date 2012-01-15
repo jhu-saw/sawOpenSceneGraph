@@ -33,6 +33,8 @@ private:
 
   osg::ref_ptr<osaOSGCamera> camera;
 
+ private:
+
   //! The input interface
   mtsInterfaceRequired* input;
   mtsFunctionRead GetPosition;

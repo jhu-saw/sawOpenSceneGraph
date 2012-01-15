@@ -65,33 +65,34 @@ int main( int, char** argv ){
   cmnLogger::SetMaskDefaultLog( CMN_LOG_ALLOW_ALL );
 
   osg::ref_ptr< osaOSGWorld > world = new osaOSGWorld;
-  
+
   // Create a camera
   int x = 0, y = 0;
   int width = 640, height = 480;
   double Znear = 0.1, Zfar = 10.0;
 
-  osaOSGMono* cameraleft;
+  mtsOSGMono* cameraleft;
   osg::Node::NodeMask maskleft = 0x01;
-  cameraleft = new osaOSGMono( world,
+  cameraleft = new mtsOSGMono( "left",
+			       world,
 			       x, y, 
 			       width, height,
 			       55.0, ((double)width)/((double)height),
 			       Znear, Zfar );
-  cameraleft->Initialize();
-  cameraleft->setCullMask( maskleft );
+  taskManager->AddComponent( cameraleft );
+  //cameraleft->setCullMask( maskleft );
 
-  
-  osaOSGMono* cameraright;
+  mtsOSGMono* cameraright;
   osg::Node::NodeMask maskright = 0x02;
-  cameraright = new osaOSGMono( world,
+  cameraright = new mtsOSGMono( "right",
+				world,
 				x, y, 
 				width, height,
 				55.0, ((double)width)/((double)height),
 				Znear, Zfar );
-  cameraright->Initialize();
-  cameraright->setCullMask( maskright );
-  
+  taskManager->AddComponent( cameraright );
+  //cameraright->setCullMask( maskright );
+
 
   // HUD
   osg::ref_ptr< osaOSGHUD > hudleft;
@@ -113,7 +114,7 @@ int main( int, char** argv ){
 
   osg::ref_ptr< osaOSGBody > background;
   background = new osaOSGBody( path+"background.3ds", world, 
-			       vctFrame4x4<double>() );
+  			       vctFrame4x4<double>() );
 
   osg::ref_ptr< mtsOSGBody > hubble;
   hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt );
@@ -124,6 +125,7 @@ int main( int, char** argv ){
 			hmotion.GetName(), "Output" );
 
 
+
   // Start the svl stuff
   svlInitialize();
 
@@ -132,47 +134,39 @@ int main( int, char** argv ){
   svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( 0, 0, width, height, hudleft );
 
-  
-  svlStreamManager streamright; 
-  svlFilterSourceVideoCapture sourceright(1); 
-  svlOSGImage imageright( 0, 0, width, height, hudright );
-  
-
   sourceleft.DialogSetup();
   imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
   
+  if (streamleft.Play() != SVL_OK)
+    std::cout <<"error"<<std::endl;
+
+  svlStreamManager streamright; 
+  svlFilterSourceVideoCapture sourceright(1); 
+  svlOSGImage imageright( 0, 0, width, height, hudright );
   
   sourceright.DialogSetup();
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
   sourceright.GetOutput()->Connect( imageright.GetInput() );
-  
-
-  if (streamleft.Play() != SVL_OK)
-    std::cout <<"error"<<std::endl;
-
-  
+    
   if (streamright.Play() != SVL_OK)
     std::cout <<"error"<<std::endl;
   
-
+  // start the components
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
-  
+
+  hudleft->Initialize();
+  hudright->Initialize();
+
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
-  while(1){
 
-    cameraleft->frame();
-    cameraright->frame();
-
-  }
-  
   cmnGetChar();
   cmnGetChar();
 

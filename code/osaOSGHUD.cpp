@@ -3,30 +3,36 @@
 
 osaOSGHUD::osaOSGHUD( osaOSGWorld* world,
 		      int width, int height,
-		      osaOSGCamera* camera ){
+		      osaOSGCamera* camera ):
+  world( world ),
+  width( width ),
+  height( height ),
+  initialized( false ){
   
   if( world != NULL && camera != NULL ){
-
     Initialize( (osg::Node*)world, 
 		width, height, 
 		(osgViewer::Viewer*)camera );
-
+    viewer = camera;
   }
 
 }
 
 osaOSGHUD::osaOSGHUD( osaOSGWorld* world,
 		      int width, int height,
-		      mtsOSGCameraTask* camera ){
+		      mtsOSGCameraTask* camera ):
+  world( world ),
+  width( width ),
+  height( height ),
+  initialized( false ){
   
   if( world != NULL && camera != NULL ){
-
     Initialize( (osg::Node*)world, 
 		width, height, 
 		(osgViewer::Viewer*)camera->camera);
-
+    viewer = camera->camera;
   }
-
+  
 }
 
 void osaOSGHUD::Initialize( osg::Node* world, 
@@ -70,9 +76,11 @@ void osaOSGHUD::Initialize( osg::Node* world,
     group->getOrCreateStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
     two->getOrCreateStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);
     viewer->setSceneData( group.get() );
+    initialized = true;
   }
-  else
-    { std::cout << "Invalid context"<<std::endl;}
+  else{ 
+    std::cout << "Invalid context"<<std::endl;
+  }
 }
 
 osaOSGHUD::~osaOSGHUD(){}
