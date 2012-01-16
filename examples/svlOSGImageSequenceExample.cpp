@@ -7,7 +7,7 @@
 #include <cisstParameterTypes/prmPositionCartesianGet.h>
 
 #include <sawOpenSceneGraph/osaOSGWorld.h>
-#include <sawOpenSceneGraph/mtsOSGMono.h>
+#include <sawOpenSceneGraph/mtsOSGStereo.h>
 #include <sawOpenSceneGraph/mtsOSGBody.h>
 #include <sawOpenSceneGraph/svlOSGImage.h>
 
@@ -71,33 +71,25 @@ int main( ){
   int width = 640, height = 480;
   double Znear = 0.1, Zfar = 10.0;
 
-  mtsOSGMono* cameraleft;
-  osg::Node::NodeMask maskleft = 0x01;
-  cameraleft = new mtsOSGMono( "cameraleft", 
-			       world,
-			       x, y, 
-			       width, height,
-			       55.0, ((double)width)/((double)height),
-			       Znear, Zfar );
-  cameraleft->setCullMask( maskleft );
-  taskManager->AddComponent( cameraleft );
-
-  mtsOSGMono* cameraright;
+  osg::Node::NodeMask maskleft  = 0x01;
   osg::Node::NodeMask maskright = 0x02;
-  cameraright = new mtsOSGMono( "cameraright", 
-				world,
-				x, y, 
-				width, height,
-				55.0, ((double)width)/((double)height),
-				Znear, Zfar );
-  cameraright->setCullMask( maskright );
-  taskManager->AddComponent( cameraright );
 
-
+  mtsOSGStereo* camera;
+  camera = new mtsOSGStereo( "camera",
+			     world,
+			     x, y, 
+			     width, height,
+			     55.0, ((double)width)/((double)height),
+			     Znear, Zfar, 
+			     0.1 );
+  camera->setCullMask( maskleft, osaOSGStereo::LEFT );
+  camera->setCullMask( maskright, osaOSGStereo::RIGHT );
+  taskManager->AddComponent( camera );
 
   // create the hubble motion
   HubbleMotion hmotion;
   taskManager->AddComponent( &hmotion );
+
 
   // create hubble
   std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
@@ -114,17 +106,18 @@ int main( ){
   			hmotion.GetName(), "Output" );
 
 
-
   // Start the svl stuff
   svlInitialize();
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  svlFilterSourceVideoCapture sourceleft(1);
+  svlFilterSourceVideoFile sourceleft(1);
+  //svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( -0.5, -0.5, 1, 1, world );
 
   // Configure the filters
-  sourceleft.DialogSetup();
+  sourceleft.SetFilePath("xray.avi");
+  //sourceleft.DialogSetup();
   imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
@@ -135,11 +128,12 @@ int main( ){
     std::cout <<"error"<<std::endl;
 
   svlStreamManager streamright; 
-  svlFilterSourceVideoCapture sourceright(1); 
+  svlFilterSourceVideoFile sourceright(1);
+  //svlFilterSourceVideoCapture sourceright(1); 
   svlOSGImage imageright( -0.5, -0.5, 1, 1, world );
-  svlFilterImageWindow windowleft, windowright;
 
-  sourceright.DialogSetup();
+  sourceright.SetFilePath("traffic.avi");
+  //sourceright.DialogSetup();
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
@@ -148,19 +142,20 @@ int main( ){
   if (streamright.Play() != SVL_OK)
     std::cout <<"error"<<std::endl;
 
+
   // start the components
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
-  std::cout << "1" << std::endl;
+
   cmnGetChar();
-  std::cout << "2" << std::endl;
   cmnGetChar();
-  std::cout << "3" << std::endl;
-  cmnGetChar();
-  std::cout << "4" << std::endl;
+
+  taskManager->KillAll();
+  taskManager->Cleanup();
+
 
   return 0;
 

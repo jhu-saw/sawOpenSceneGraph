@@ -1,10 +1,12 @@
+#include <cisstCommon/cmnGetChar.h>
+
 #include <cisstMultiTask/mtsTaskPeriodic.h>
 #include <cisstMultiTask/mtsInterfaceProvided.h>
 #include <cisstMultiTask/mtsMatrix.h>
 
 #include <cisstOSAbstraction/osaSleep.h>
 #include <sawOpenSceneGraph/osaOSGWorld.h>
-#include <sawOpenSceneGraph/osaOSGMono.h>
+#include <sawOpenSceneGraph/mtsOSGMono.h>
 #include <sawOpenSceneGraph/mtsOSGImage.h>
 #include <sawOpenSceneGraph/osaOSGBody.h>
 #include <osgDB/ReadFile>
@@ -70,12 +72,21 @@ int main( ){
   int x = 0, y = 0;
   int width = 640, height = 480;
   double Znear = 0.1, Zfar = 10.0;
+  /*
   osg::ref_ptr< osaOSGMono > camera;
   camera = new osaOSGMono( world,
 			   x, y, width, height,
 			   55.0, ((double)width)/((double)height),
 			   Znear, Zfar );
   camera->Initialize();
+  */
+  mtsOSGMono* camera;
+  camera = new mtsOSGMono( "camera", 
+			   world,
+			   x, y, width, height,
+			   55.0, ((double)width)/((double)height),
+			   Znear, Zfar );
+  taskManager->AddComponent( camera );
 
   mtsOSGImage* client = new mtsOSGImage( "client", -.5, -.5, 1.0, 1.0, world );
   taskManager->AddComponent( client );
@@ -87,11 +98,17 @@ int main( ){
 			client->GetName(), "Input" );
 
   taskManager->CreateAll();
+  taskManager->WaitForStateAll( mtsComponentState::READY );
+
   taskManager->StartAll();
+  taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
+  std::cout << "ENTER to exit" << std::endl;
+  cmnGetChar();
+  cmnGetChar();
 
-  while( 1 )
-    { camera->frame(); }
+  taskManager->KillAll();
+  taskManager->Cleanup();
 
   return 0;
 

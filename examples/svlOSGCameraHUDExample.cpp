@@ -7,7 +7,7 @@
 #include <cisstParameterTypes/prmPositionCartesianGet.h>
 
 #include <sawOpenSceneGraph/osaOSGWorld.h>
-#include <sawOpenSceneGraph/mtsOSGMono.h>
+#include <sawOpenSceneGraph/mtsOSGStereo.h>
 #include <sawOpenSceneGraph/osaOSGHUD.h>
 #include <sawOpenSceneGraph/mtsOSGBody.h>
 #include <sawOpenSceneGraph/svlOSGImage.h>
@@ -56,7 +56,7 @@ public:
 
 };
 
-int main( int, char** argv ){
+int main(){
 
   mtsTaskManager* taskManager = mtsTaskManager::GetInstance();
 
@@ -71,36 +71,27 @@ int main( int, char** argv ){
   int width = 640, height = 480;
   double Znear = 0.1, Zfar = 10.0;
 
-  mtsOSGMono* cameraleft;
-  osg::Node::NodeMask maskleft = 0x01;
-  cameraleft = new mtsOSGMono( "left",
-			       world,
-			       x, y, 
-			       width, height,
-			       55.0, ((double)width)/((double)height),
-			       Znear, Zfar );
-  taskManager->AddComponent( cameraleft );
-  //cameraleft->setCullMask( maskleft );
-
-  mtsOSGMono* cameraright;
+  osg::Node::NodeMask maskleft  = 0x01;
   osg::Node::NodeMask maskright = 0x02;
-  cameraright = new mtsOSGMono( "right",
-				world,
-				x, y, 
-				width, height,
-				55.0, ((double)width)/((double)height),
-				Znear, Zfar );
-  taskManager->AddComponent( cameraright );
-  //cameraright->setCullMask( maskright );
 
+  mtsOSGStereo* camera;
+  camera = new mtsOSGStereo( "camera",
+			     world,
+			     x, y, 
+			     width, height,
+			     55.0, ((double)width)/((double)height),
+			     Znear, Zfar, 
+			     0.1 );
+  camera->setCullMask( maskleft, osaOSGStereo::LEFT );
+  camera->setCullMask( maskright, osaOSGStereo::RIGHT );
+  taskManager->AddComponent( camera );
 
-  // HUD
+  // head up displays
   osg::ref_ptr< osaOSGHUD > hudleft;
-  hudleft = new osaOSGHUD( world, width, height, cameraleft );
+  hudleft = new osaOSGHUD( world, width, height, camera, 0 );
 
   osg::ref_ptr< osaOSGHUD > hudright;
-  hudright = new osaOSGHUD( world, width, height, cameraright );
-
+  hudright = new osaOSGHUD( world, width, height, camera, 1 );
 
   // create the hubble motion
   HubbleMotion hmotion;
@@ -124,50 +115,50 @@ int main( int, char** argv ){
   taskManager->Connect( hubble->GetName(), "Input",
 			hmotion.GetName(), "Output" );
 
-
-
   // Start the svl stuff
   svlInitialize();
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  svlFilterSourceVideoCapture sourceleft(1);
+  svlFilterSourceVideoFile sourceleft(1);
+  //svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( 0, 0, width, height, hudleft );
 
-  sourceleft.DialogSetup();
+  sourceleft.SetFilePath("xray.avi");
+  //sourceleft.DialogSetup();
   imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
   
-  if (streamleft.Play() != SVL_OK)
-    std::cout <<"error"<<std::endl;
+  if (streamleft.Play() != SVL_OK) std::cout <<"error"<<std::endl;
 
   svlStreamManager streamright; 
-  svlFilterSourceVideoCapture sourceright(1); 
+  svlFilterSourceVideoFile sourceright(1);
+  //svlFilterSourceVideoCapture sourceright(1); 
   svlOSGImage imageright( 0, 0, width, height, hudright );
-  
-  sourceright.DialogSetup();
+
+  sourceright.SetFilePath("traffic.avi");
+  //sourceright.DialogSetup();
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
   sourceright.GetOutput()->Connect( imageright.GetInput() );
-    
-  if (streamright.Play() != SVL_OK)
-    std::cout <<"error"<<std::endl;
   
+  if(streamright.Play() != SVL_OK) std::cout <<"error"<<std::endl;
+
   // start the components
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
 
+  // HUD
   hudleft->Initialize();
   hudright->Initialize();
 
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
-
-  cmnGetChar();
+  //while(1) camera->frame();
   cmnGetChar();
 
   return 0;

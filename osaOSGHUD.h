@@ -15,16 +15,17 @@ class CISST_EXPORT osaOSGHUD : public osg::Camera {
 
  private:
 
-  osg::ref_ptr<osaOSGWorld> world;
+  osg::ref_ptr<osg::Node> root;
   osg::ref_ptr<osgViewer::Viewer> viewer;
   int width;
   int height;
-    
+  int window;
 
   bool initialized;
   void Initialize( osg::Node* root,
 		   int width, int height, 
-		   osgViewer::Viewer* viewer );
+		   osgViewer::Viewer* viewer,
+		   size_t window );
 
  public : 
 
@@ -37,15 +38,30 @@ class CISST_EXPORT osaOSGHUD : public osg::Camera {
      \param world The world the camera belongs to
      \param width The width of the camera image
   */
-  osaOSGHUD( osaOSGWorld* world, int width, int height, osaOSGCamera* camera );
   osaOSGHUD( osaOSGWorld* world, 
+	     int width, int height, 
+	     osaOSGCamera* camera,
+	     int window = 0 );
+
+  osaOSGHUD( osg::Node* node, 
 	     int width, int height,
-	     mtsOSGCameraTask* camera );
+	     osaOSGCamera* camera,
+	     int window = 0 );
+
+  osaOSGHUD( osaOSGWorld* world,
+	     int width, int height,
+	     mtsOSGCameraTask* camera,
+	     int window = 0 );
+
+  osaOSGHUD( osg::Node* node,
+	     int width, int height,
+	     mtsOSGCameraTask* camera,
+	     int window = 0 );
   
   ~osaOSGHUD();
 
   void Initialize()
-  { if( !initialized ){ Initialize( world, width, height, viewer ); } }
+  {if( !initialized ){Initialize( root, width, height, viewer, window );}}
 
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 

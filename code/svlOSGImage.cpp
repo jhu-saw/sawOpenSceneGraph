@@ -58,7 +58,6 @@ svlOSGImage::svlOSGImage( float x, float y,
   image = new svlOSGImage::Image( x, y, width, height, hud );
   image->svlImage = this;
 
-
 }
 
 svlOSGImage::~svlOSGImage()

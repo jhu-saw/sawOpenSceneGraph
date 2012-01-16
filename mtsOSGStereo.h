@@ -51,6 +51,12 @@ class mtsOSGStereo : public mtsOSGCameraTask {
   
   ~mtsOSGStereo(){}
 
+  void setCullMask( osg::Node::NodeMask mask, osaOSGStereo::Camera idx ){ 
+    osaOSGStereo* stereo = dynamic_cast< osaOSGStereo* >( camera.get() );
+    if( stereo != NULL )
+      { stereo->setCullMask( mask, idx ); }
+  }
+
 };
 
 #endif

@@ -29,7 +29,7 @@ class CISST_EXPORT mtsOSGCameraTask : public mtsTaskContinuous{
 
   friend class osaOSGHUD;
   
-private:
+ protected:
 
   osg::ref_ptr<osaOSGCamera> camera;
 

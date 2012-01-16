@@ -8,6 +8,10 @@
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
 
 class CISST_EXPORT osaOSGStereo : public osaOSGCamera {
+
+ public:
+
+  enum Camera{ LEFT, RIGHT };
   
  private:
 
@@ -51,6 +55,12 @@ class CISST_EXPORT osaOSGStereo : public osaOSGCamera {
 		bool trackball = true,
 		const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>() );
   ~osaOSGStereo( );
+
+  void setCullMask( osg::Node::NodeMask mask, osaOSGStereo::Camera idx ){ 
+    osg::View::Slave& slave = getSlave( idx );
+    osg::ref_ptr<osg::Camera> camera = slave._camera.get();
+    camera->setCullMask( mask ); 
+  }
 
   void Initialize();
   

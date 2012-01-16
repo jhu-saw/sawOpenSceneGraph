@@ -101,12 +101,12 @@ void osaOSGStereo::Initialize(){
     traits->y = y + 0;
     traits->width = width;
     traits->height = height;
-    traits->windowDecoration = false;//true;
+    traits->windowDecoration = true;
     traits->doubleBuffer = true;
     traits->sharedContext = 0;
 
     // slave "0" is the first slave. In this case the "left" camera
-    osg::View::Slave& slave = getSlave(0);
+    osg::View::Slave& slave = getSlave( osaOSGStereo::LEFT );
     osg::Camera* camera = slave._camera.get();
 
     osg::ref_ptr<osg::GraphicsContext> gc;
@@ -128,12 +128,12 @@ void osaOSGStereo::Initialize(){
     traits->y = y + 0;
     traits->width = width;
     traits->height = height;
-    traits->windowDecoration = false;//true;
+    traits->windowDecoration = true;
     traits->doubleBuffer = true;
     traits->sharedContext = 0;
 
     // slave "1" is the second slave. In this case the "right" camera
-    osg::View::Slave& slave = getSlave(1);
+    osg::View::Slave& slave = getSlave( osaOSGStereo::RIGHT );
     osg::Camera* camera = slave._camera.get();
 
     osg::ref_ptr<osg::GraphicsContext> gc;
