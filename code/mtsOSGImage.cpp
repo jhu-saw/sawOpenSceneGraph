@@ -88,12 +88,9 @@ void mtsOSGImage::UpdateImage(){
 
 }
 
-
+#include <cisstOSAbstraction/osaSleep.h>
 void mtsOSGImage::Startup(){}
-void mtsOSGImage::Run(){
-  ProcessQueuedCommands();
-  usleep(1000000);
-}
+void mtsOSGImage::Run(){ ProcessQueuedCommands(); osaSleep(1.0/30.0); }
 void mtsOSGImage::Cleanup(){}
 
 
