@@ -331,7 +331,7 @@ void osaOSGBody::UpdateTransform(){
 }
 
 void osaOSGBody::UpdateSwitch()
-{ osgswitch->setValue( 0, onoff ); }
+{ osgswitch->setValue( 0, (bool)onoff ); }
 
 void osaOSGBody::SetTransform( const vctFrame4x4<double>& Rt )
 { transform = Rt; }

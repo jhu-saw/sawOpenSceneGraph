@@ -255,7 +255,7 @@ void osaOSGImage::UpdateTransform(){
 }
 
 void osaOSGImage::UpdateSwitch()
-{ osgswitch->setValue( 0, onoff ); }
+{ osgswitch->setValue( 0, (bool)onoff ); }
 
 void osaOSGImage::SetTransform( const vctFrame4x4<double>& Rt )
 { transform = Rt; }

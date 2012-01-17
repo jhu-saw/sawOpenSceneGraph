@@ -115,38 +115,6 @@ int main(){
   taskManager->Connect( hubble->GetName(), "Input",
 			hmotion.GetName(), "Output" );
 
-  // Start the svl stuff
-  svlInitialize();
-
-  // Creating SVL objects
-  svlStreamManager streamleft;
-  svlFilterSourceVideoFile sourceleft(1);
-  //svlFilterSourceVideoCapture sourceleft(1);
-  svlOSGImage imageleft( 0, 0, width, height, hudleft );
-
-  sourceleft.SetFilePath("xray.avi");
-  //sourceleft.DialogSetup();
-  imageleft.setNodeMask( maskleft );
-
-  streamleft.SetSourceFilter( &sourceleft );
-  sourceleft.GetOutput()->Connect( imageleft.GetInput() );
-  
-  if (streamleft.Play() != SVL_OK) std::cout <<"error"<<std::endl;
-
-  svlStreamManager streamright; 
-  svlFilterSourceVideoFile sourceright(1);
-  //svlFilterSourceVideoCapture sourceright(1); 
-  svlOSGImage imageright( 0, 0, width, height, hudright );
-
-  sourceright.SetFilePath("traffic.avi");
-  //sourceright.DialogSetup();
-  imageright.setNodeMask( maskright );
-
-  streamright.SetSourceFilter( &sourceright );
-  sourceright.GetOutput()->Connect( imageright.GetInput() );
-  
-  if(streamright.Play() != SVL_OK) std::cout <<"error"<<std::endl;
-
   // start the components
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
@@ -158,8 +126,51 @@ int main(){
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
-  //while(1) camera->frame();
+  // Start the svl stuff
+  svlInitialize();
+
+  // Creating SVL objects
+  svlStreamManager streamleft;
+  //svlFilterSourceVideoFile sourceleft(1);
+  svlFilterSourceVideoCapture sourceleft(1);
+  svlOSGImage imageleft( 0, 0, width, height, hudleft );
+  svlFilterImageWindow windowleft;
+
+  //sourceleft.SetFilePath("xray.avi");
+  sourceleft.DialogSetup();
+  imageleft.setNodeMask( maskleft );
+
+  streamleft.SetSourceFilter( &sourceleft );
+  //sourceleft.GetOutput()->Connect( windowleft.GetInput() );
+  sourceleft.GetOutput()->Connect( imageleft.GetInput() );
+  
+  svlStreamManager streamright; 
+  //svlFilterSourceVideoFile sourceright(1);
+  svlFilterSourceVideoCapture sourceright(1); 
+  svlOSGImage imageright( 0, 0, width, height, hudright );
+  svlFilterImageWindow windowright;
+
+  //sourceright.SetFilePath("traffic.avi");
+  sourceright.DialogSetup();
+  imageright.setNodeMask( maskright );
+
+  streamright.SetSourceFilter( &sourceright );
+  //sourceright.GetOutput()->Connect( windowright.GetInput() );
+  sourceright.GetOutput()->Connect( imageright.GetInput() );
+  
+  if( streamleft.Play() != SVL_OK ) std::cout <<"error"<<std::endl;
+  if( streamright.Play() != SVL_OK ) std::cout <<"error"<<std::endl;
+
+
+  std::cout << "ENTER to exit." << std::endl;
   cmnGetChar();
+  cmnGetChar();
+
+  streamleft.Release();
+  streamright.Release();
+
+  taskManager->KillAll();
+  taskManager->Cleanup();
 
   return 0;
 

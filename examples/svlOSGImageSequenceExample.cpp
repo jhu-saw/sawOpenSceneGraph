@@ -106,18 +106,25 @@ int main( ){
   			hmotion.GetName(), "Output" );
 
 
+  // start the components
+  taskManager->CreateAll();
+  taskManager->WaitForStateAll( mtsComponentState::READY );
+  taskManager->StartAll();
+  taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
+
+
   // Start the svl stuff
   svlInitialize();
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  svlFilterSourceVideoFile sourceleft(1);
-  //svlFilterSourceVideoCapture sourceleft(1);
+  //svlFilterSourceVideoFile sourceleft(1);
+  svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( -0.5, -0.5, 1, 1, world );
 
   // Configure the filters
-  sourceleft.SetFilePath("xray.avi");
-  //sourceleft.DialogSetup();
+  //sourceleft.SetFilePath("xray.avi");
+  sourceleft.DialogSetup();
   imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
@@ -128,12 +135,12 @@ int main( ){
     std::cout <<"error"<<std::endl;
 
   svlStreamManager streamright; 
-  svlFilterSourceVideoFile sourceright(1);
-  //svlFilterSourceVideoCapture sourceright(1); 
+  //svlFilterSourceVideoFile sourceright(1);
+  svlFilterSourceVideoCapture sourceright(1); 
   svlOSGImage imageright( -0.5, -0.5, 1, 1, world );
 
-  sourceright.SetFilePath("traffic.avi");
-  //sourceright.DialogSetup();
+  //sourceright.SetFilePath("traffic.avi");
+  sourceright.DialogSetup();
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
@@ -142,20 +149,12 @@ int main( ){
   if (streamright.Play() != SVL_OK)
     std::cout <<"error"<<std::endl;
 
-
-  // start the components
-  taskManager->CreateAll();
-  taskManager->WaitForStateAll( mtsComponentState::READY );
-  taskManager->StartAll();
-  taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
-
-
+  std::cout << "ENTER to exit." << std::endl;
   cmnGetChar();
   cmnGetChar();
 
   taskManager->KillAll();
   taskManager->Cleanup();
-
 
   return 0;
 

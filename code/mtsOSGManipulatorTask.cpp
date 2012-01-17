@@ -79,7 +79,8 @@ void mtsOSGManipulatorTask::Run(){
     }
 
     vctFrame4x4<double> Rt4x4 = manipulator->ForwardKinematics( qin.Goal() );
-    vctQuaternionRotation3<double> q( Rt4x4.Rotation(), VCT_NORMALIZE );
+    vctMatrixRotation3<double> R( Rt4x4.Rotation() );
+    vctQuaternionRotation3<double> q( R, VCT_NORMALIZE );
     Rtout.Position() = vctFrm3( q, Rt4x4.Translation() );
 
   }

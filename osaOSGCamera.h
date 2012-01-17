@@ -6,7 +6,7 @@
 #include <sawOpenSceneGraph/sawOpenSceneGraphConfig.h>
 
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
-#include <opencv2/opencv.hpp>
+//#include <opencv2/opencv.hpp>
 #endif
 
 #include <osgViewer/Viewer>
