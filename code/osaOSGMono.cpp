@@ -1,4 +1,5 @@
 #include <sawOpenSceneGraph/osaOSGMono.h>
+#include <sawOpenSceneGraph/osaOSGHUD.h>
 #include <cisstOSAbstraction/osaSleep.h>
 #undef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
@@ -73,6 +74,9 @@ void osaOSGMono::Initialize(){
   camera->setDrawBuffer( buffer );
   camera->setReadBuffer( buffer );
   camera->setClearColor( osg::Vec4d( 0.0, 0.0, 0.0, 0.0 ) );
+
+  for( size_t i=0; i<huds.size(); i++ )
+    { huds[i]->Initialize( gc.get() ); }
 
 }
 

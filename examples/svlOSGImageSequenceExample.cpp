@@ -118,40 +118,43 @@ int main( ){
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  //svlFilterSourceVideoFile sourceleft(1);
-  svlFilterSourceVideoCapture sourceleft(1);
+  svlFilterSourceVideoFile sourceleft(1);
+  //svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( -0.5, -0.5, 1, 1, world );
 
   // Configure the filters
-  //sourceleft.SetFilePath("xray.avi");
-  sourceleft.DialogSetup();
+  sourceleft.SetFilePath("xray.avi");
+  //sourceleft.DialogSetup();
   imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
 
-  // start the streams
-  if (streamleft.Play() != SVL_OK)
-    std::cout <<"error"<<std::endl;
-
   svlStreamManager streamright; 
-  //svlFilterSourceVideoFile sourceright(1);
-  svlFilterSourceVideoCapture sourceright(1); 
+  svlFilterSourceVideoFile sourceright(1);
+  //svlFilterSourceVideoCapture sourceright(1); 
   svlOSGImage imageright( -0.5, -0.5, 1, 1, world );
 
-  //sourceright.SetFilePath("traffic.avi");
-  sourceright.DialogSetup();
+  sourceright.SetFilePath("traffic.avi");
+  //sourceright.DialogSetup();
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
   sourceright.GetOutput()->Connect( imageright.GetInput() );
 
+  // start the streams
+  if (streamleft.Play() != SVL_OK)
+    { std::cerr << "Cannot start left stream." <<std::endl; }
+
   if (streamright.Play() != SVL_OK)
-    std::cout <<"error"<<std::endl;
+    { std::cerr << "Cannot start right stream." <<std::endl; }
 
   std::cout << "ENTER to exit." << std::endl;
   cmnGetChar();
   cmnGetChar();
+
+  streamleft.Release();
+  streamright.Release();
 
   taskManager->KillAll();
   taskManager->Cleanup();

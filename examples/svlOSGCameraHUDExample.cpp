@@ -87,11 +87,8 @@ int main(){
   taskManager->AddComponent( camera );
 
   // head up displays
-  osg::ref_ptr< osaOSGHUD > hudleft;
-  hudleft = new osaOSGHUD( world, width, height, camera, 0 );
-
-  osg::ref_ptr< osaOSGHUD > hudright;
-  hudright = new osaOSGHUD( world, width, height, camera, 1 );
+  osg::ref_ptr< osaOSGHUD > hudleft = new osaOSGHUD( world, camera );
+  osg::ref_ptr< osaOSGHUD > hudright = new osaOSGHUD( world, camera );
 
   // create the hubble motion
   HubbleMotion hmotion;
@@ -106,7 +103,7 @@ int main(){
   osg::ref_ptr< osaOSGBody > background;
   background = new osaOSGBody( path+"background.3ds", world, 
   			       vctFrame4x4<double>() );
-
+  
   osg::ref_ptr< mtsOSGBody > hubble;
   hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt );
   taskManager->AddComponent( hubble.get() );
@@ -119,10 +116,6 @@ int main(){
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
 
-  // HUD
-  hudleft->Initialize();
-  hudright->Initialize();
-
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
@@ -131,13 +124,13 @@ int main(){
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  //svlFilterSourceVideoFile sourceleft(1);
-  svlFilterSourceVideoCapture sourceleft(1);
+  svlFilterSourceVideoFile sourceleft(1);
+  //svlFilterSourceVideoCapture sourceleft(1);
   svlOSGImage imageleft( 0, 0, width, height, hudleft );
   svlFilterImageWindow windowleft;
 
-  //sourceleft.SetFilePath("xray.avi");
-  sourceleft.DialogSetup();
+  sourceleft.SetFilePath("xray.avi");
+  //sourceleft.DialogSetup();
   imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
@@ -145,22 +138,24 @@ int main(){
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
   
   svlStreamManager streamright; 
-  //svlFilterSourceVideoFile sourceright(1);
-  svlFilterSourceVideoCapture sourceright(1); 
+  svlFilterSourceVideoFile sourceright(1);
+  //svlFilterSourceVideoCapture sourceright(1); 
   svlOSGImage imageright( 0, 0, width, height, hudright );
   svlFilterImageWindow windowright;
 
-  //sourceright.SetFilePath("traffic.avi");
-  sourceright.DialogSetup();
+  sourceright.SetFilePath("traffic.avi");
+  //sourceright.DialogSetup();
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
   //sourceright.GetOutput()->Connect( windowright.GetInput() );
   sourceright.GetOutput()->Connect( imageright.GetInput() );
   
-  if( streamleft.Play() != SVL_OK ) std::cout <<"error"<<std::endl;
-  if( streamright.Play() != SVL_OK ) std::cout <<"error"<<std::endl;
+  if( streamleft.Play() != SVL_OK )
+    { std::cerr << "Cannot start left stream." <<std::endl; }
 
+  if( streamright.Play() != SVL_OK ) std::cout <<"error"<<std::endl;
+    { std::cerr << "Cannot start right stream." <<std::endl; }
 
   std::cout << "ENTER to exit." << std::endl;
   cmnGetChar();

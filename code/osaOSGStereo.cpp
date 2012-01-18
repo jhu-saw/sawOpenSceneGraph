@@ -1,4 +1,5 @@
 #include <sawOpenSceneGraph/osaOSGStereo.h>
+#include <sawOpenSceneGraph/osaOSGHUD.h>
 
 osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
 			    int x, int y, int width, int height,
@@ -117,7 +118,8 @@ void osaOSGStereo::Initialize(){
     camera->setDrawBuffer( buffer );
     camera->setReadBuffer( buffer );
     camera->setClearColor( osg::Vec4d( 0.0, 0.0, 0.0, 0.0 ) );
-
+    if( 0 < huds.size() )
+      { huds[0]->Initialize( gc.get() ); }      
   }
 
   {
@@ -144,6 +146,8 @@ void osaOSGStereo::Initialize(){
     camera->setDrawBuffer(buffer);
     camera->setReadBuffer(buffer);
     camera->setClearColor( osg::Vec4d( 0.0, 0.0, 0.0, 0.0 ) );
+    if( 1 < huds.size() )
+      { huds[1]->Initialize( gc.get() ); }      
 
   }
 

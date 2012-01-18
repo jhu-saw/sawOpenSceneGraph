@@ -28,10 +28,10 @@ int main( ){
   image = new osaOSGImage( -.5, -.5, 1, 1, world, vctFrame4x4<double>() );
 
   int i=0;
-  while( i < 124 ){
+  while( i < 125 ){
 
     char buffer[128];
-    sprintf( buffer, "walkcircle/frame%04d.tif", i++ );
+    sprintf( buffer, "walkstraight/frame%04d.tif", i++ );
 
     image->SetImage( std::string( buffer ) );
     camera->frame();

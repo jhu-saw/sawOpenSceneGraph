@@ -19,8 +19,11 @@
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
 
 class mtsOSGCamera;
+class osaOSGHUD;
 
 class CISST_EXPORT osaOSGCamera : public osgViewer::Viewer{
+
+  friend class osaOSGHUD;
 
  public:
 
@@ -197,7 +200,8 @@ class CISST_EXPORT osaOSGCamera : public osgViewer::Viewer{
 
 #endif // SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
-
+  std::vector< osg::ref_ptr< osaOSGHUD > > huds;
+  void AddHUD( osaOSGHUD* hud );
 
  public : 
 

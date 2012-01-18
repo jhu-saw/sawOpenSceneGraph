@@ -1,4 +1,5 @@
 #include <sawOpenSceneGraph/osaOSGCamera.h>
+#include <sawOpenSceneGraph/osaOSGHUD.h>
 #include <osg/MatrixTransform>
 #include <osgGA/TrackballManipulator>
 
@@ -379,6 +380,9 @@ osaOSGCamera::osaOSGCamera( osaOSGWorld* world,
 }
 
 osaOSGCamera::~osaOSGCamera(){}
+
+void osaOSGCamera::AddHUD( osaOSGHUD* hud )
+{ huds.push_back( hud ); }
 
 // This is called from the OSG update callback thread
 void osaOSGCamera::UpdateTransform()

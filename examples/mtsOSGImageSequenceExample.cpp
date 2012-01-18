@@ -72,14 +72,6 @@ int main( ){
   int x = 0, y = 0;
   int width = 640, height = 480;
   double Znear = 0.1, Zfar = 10.0;
-  /*
-  osg::ref_ptr< osaOSGMono > camera;
-  camera = new osaOSGMono( world,
-			   x, y, width, height,
-			   55.0, ((double)width)/((double)height),
-			   Znear, Zfar );
-  camera->Initialize();
-  */
   mtsOSGMono* camera;
   camera = new mtsOSGMono( "camera", 
 			   world,

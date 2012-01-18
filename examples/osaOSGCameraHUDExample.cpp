@@ -24,8 +24,9 @@ int main( int, char** argv ){
 			   x, y, width, height,
 			   55.0, ((double)width)/((double)height),
 			   Znear, Zfar );
-			   
   camera->Initialize();
+
+  osg::ref_ptr< osaOSGHUD > hud = new osaOSGHUD( world, camera );
 
   // Create the objects
   std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
@@ -36,16 +37,12 @@ int main( int, char** argv ){
   osg::ref_ptr< osaOSGBody > background;
   background = new osaOSGBody( path+"background.3ds", world, 
   			       vctFrame4x4<double>() );
+
   osg::ref_ptr< osaOSGBody > hubble;
   hubble = new osaOSGBody( path+"hst.3ds", world, Rt );
-  
-
-  osg::ref_ptr< osaOSGHUD > hud;
-  hud = new osaOSGHUD( world, width, height, camera );
 
   osg::ref_ptr< osaOSGImage > image;
   image = new osaOSGImage( 0, 0, width, height, hud );
-  hud->addChild( hubble);
 
   std::cout << "ESC to quit" << std::endl;
 

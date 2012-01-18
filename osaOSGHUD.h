@@ -3,6 +3,7 @@
 #ifndef _osaOSGHUD_h
 #define _osaOSGHUD_h
 
+
 #include <sawOpenSceneGraph/sawOpenSceneGraphConfig.h>
 
 #include <cisstVector/vctDynamicNArray.h>
@@ -13,55 +14,29 @@
 
 class CISST_EXPORT osaOSGHUD : public osg::Camera {
 
+  friend class osaOSGMono;
+  friend class osaOSGStereo;
+  
  private:
-
-  osg::ref_ptr<osg::Node> root;
-  osg::ref_ptr<osgViewer::Viewer> viewer;
-  int width;
-  int height;
-  int window;
-
-  bool initialized;
-  void Initialize( osg::Node* root,
-		   int width, int height, 
-		   osgViewer::Viewer* viewer,
-		   size_t window );
+  
+  osg::ref_ptr< osg::Node > root;
+  osg::ref_ptr< osgViewer::Viewer > viewer;
+  
+  void Initialize( osg::GraphicsContext* gc );
 
  public : 
 
-  //! Create an OSG mono camera (master camera)
+  //! Create an Head Up Display
   /**
-     Create an OSG mono wrapped in a MTS continuous task. The camera also
-     creates an MTS required interface called "Transformation" if a function
-     name is provided. This function is used to update the position of the
-     camera at each update traversal.
-     \param world The world the camera belongs to
-     \param width The width of the camera image
   */
   osaOSGHUD( osaOSGWorld* world, 
-	     int width, int height, 
-	     osaOSGCamera* camera,
-	     int window = 0 );
-
-  osaOSGHUD( osg::Node* node, 
-	     int width, int height,
-	     osaOSGCamera* camera,
-	     int window = 0 );
+	     osaOSGCamera* camera );
 
   osaOSGHUD( osaOSGWorld* world,
-	     int width, int height,
-	     mtsOSGCameraTask* camera,
-	     int window = 0 );
+	     mtsOSGCameraTask* camera );
 
-  osaOSGHUD( osg::Node* node,
-	     int width, int height,
-	     mtsOSGCameraTask* camera,
-	     int window = 0 );
-  
   ~osaOSGHUD();
 
-  void Initialize()
-  {if( !initialized ){Initialize( root, width, height, viewer, window );}}
 
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
