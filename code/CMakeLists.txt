@@ -181,7 +181,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
       )
 
   # Install target for headers and library
-  install (FILES HEADER_FILES
+  install (FILES ${HEADER_FILES}
            DESTINATION include)
 
   install (TARGETS sawOpenSceneGraph
