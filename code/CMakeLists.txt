@@ -33,7 +33,7 @@ set(
 #  osgText )
 
 find_package( cisst REQUIRED ${REQUIRED_CISST_LIBRARIES} )
-find_package( OpenSceneGraph COMPONENTS ${REQUIRED_OPENSCENEGRAPH_LIBRARIES} )
+find_package( OpenSceneGraph REQUIRED ${REQUIRED_OPENSCENEGRAPH_LIBRARIES} )
 find_package( OpenCV2 )
 
 if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
@@ -180,5 +180,13 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
       OSG_LIBRARY_DEBUG
       )
 
+  # Install target for headers and library
+  install (FILES HEADER_FILES
+           DESTINATION include)
+
+  install (TARGETS sawOpenSceneGraph
+           RUNTIME DESTINATION bin
+           LIBRARY DESTINATION lib
+           ARCHIVE DESTINATION lib)
 
 endif( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
