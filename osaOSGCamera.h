@@ -7,6 +7,7 @@
 
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 //#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #endif
 
 #include <osgViewer/Viewer>

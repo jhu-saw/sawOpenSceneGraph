@@ -92,6 +92,16 @@ void osaOSGBody::SwitchCallback::operator()( osg::Node* node,
 
 }   
 
+osaOSGBody::osaOSGBody(osaOSGWorld* world, const vctFrame4x4<double>& Rt) :
+    transform(Rt),
+    onoff( SWITCH_ON ){
+
+    Initialize(1.0); // scale = 1.0
+    if( world != NULL )
+    { world->addChild( this ); }
+
+    UpdateTransform();
+}
 
 osaOSGBody::osaOSGBody( const std::string& model, 
 			    const vctFrame4x4<double>& Rt,
@@ -120,7 +130,6 @@ osaOSGBody::osaOSGBody( const std::string& model,
   // Once this is done add the body to the world
   if( world != NULL )
     { world->addChild( this ); }
-
 }
 
 osaOSGBody::osaOSGBody( const std::string& model, 
@@ -202,13 +211,20 @@ void osaOSGBody::Initialize( double scale ){
   // Add an update callback to the switch
   switchcallback = new osaOSGBody::SwitchCallback;
   osgswitch->setUpdateCallback( switchcallback );
-  
+
   osgtransform->addChild( osgscale );
   osgswitch->addChild( osgtransform );
   this->addChild( osgswitch );
   
   SetTransform( transform );
 
+}
+
+void osaOSGBody::AddTransformCallback() {
+    if( transformcallback == NULL) {
+        transformcallback = new osaOSGBody::TransformCallback;
+        osgtransform->setUpdateCallback( transformcallback );
+    }
 }
 
 void osaOSGBody::ReadModel( const std::string& model,
@@ -253,14 +269,14 @@ void osaOSGBody::Read3DData( const vctDynamicMatrix<double>& pc,
   }
   
   // First, create a geode
-  osg::ref_ptr<osg::Geode> geode;
-  try{ geode = new osg::Geode; }
+  //osg::ref_ptr<osg::Geode> geode;
+  try{ osggeode = new osg::Geode; }
   catch( std::bad_alloc& ){ 
     CMN_LOG_RUN_ERROR << CMN_LOG_DETAILS
 		      << "Failed to create a geode." 
 		      << std::endl;
   }
-  osgscale->addChild( geode );
+  osgscale->addChild( osggeode );
 
   // then create a geometry
   osg::ref_ptr<osg::Geometry> pointsGeom;
@@ -273,7 +289,7 @@ void osaOSGBody::Read3DData( const vctDynamicMatrix<double>& pc,
   pointsGeom->getOrCreateStateSet()->setAttribute( new osg::Point( size ),
   						   osg::StateAttribute::ON );
   // add the geometry to the geod
-  geode->addDrawable( pointsGeom );
+  osggeode->addDrawable( pointsGeom );
 
   // Create an array primitive set 
   osg::ref_ptr<osg::DrawArrays> drawArrayPoints;
@@ -322,7 +338,6 @@ void osaOSGBody::Read3DData( const vctDynamicMatrix<double>& pc,
 // This is called from the body's callback
 // This reads a transformation if the body is connected to an interface
 void osaOSGBody::UpdateTransform(){
-
   vctFrame4x4<double> Rt( transform );
   osgtransform->setMatrix( osg::Matrix ( Rt[0][0], Rt[1][0], Rt[2][0], 0.0,
 					 Rt[0][1], Rt[1][1], Rt[2][1], 0.0,

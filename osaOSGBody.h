@@ -133,7 +133,7 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
   // The switch
   osg::ref_ptr< osg::Switch> osgswitch;
 
-
+  osg::ref_ptr<osg::Geode> osggeode;
 
   // I/O
   void ReadModel( const std::string& fname,
@@ -146,6 +146,12 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
  public: 
 
   static const vctFixedSizeVector<unsigned char,3> RGBDEFAULT;
+
+  //! OSG Body constructor
+  /**
+    Add body to a given world or subworld
+  */
+  osaOSGBody(osaOSGWorld* world, const vctFrame4x4<double>& Rt);
 
   //! OSG Body constructor
   /**
@@ -195,6 +201,8 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
 		const vctFixedSizeVector<unsigned char,3>& rgb=RGBDEFAULT,
 		float size = 3.0 );
 
+  osaOSGBody();
+
   ~osaOSGBody();
 
   void Initialize( double scale = 1.0 );
@@ -204,6 +212,18 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
   virtual void SetTransform( const vctFrm3& Rt );
   virtual vctFrm3 GetTransform() const;
 
+  osg::ref_ptr<osg::MatrixTransform> GetMatrixTransform() {
+      return this->osgtransform;
+  }
+
+  void ResetMatrixTransform(){
+      osg::Matrix matrix = osgtransform->getMatrix();
+      vctFrame4x4<double> frame( vctMatrixRotation3<double>( matrix(0,0),  matrix(0,1),  matrix(0,2),
+                                                             matrix(1,0),  matrix(1,1),  matrix(1,2),
+                                                             matrix(2,0),  matrix(2,1), matrix(2,2)),
+                                 vctFixedSizeVector<double,3>(matrix(0,3), matrix(1,3), matrix(2,3)));
+      SetTransform(frame);
+  }
 
   //! Set the switch of the body
   void SwitchOn();
@@ -212,6 +232,8 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
   void SetModeLine();
   void SetModePoint();
   void SetModeFill();
+
+  void AddTransformCallback(void);
 
   virtual vctDynamicMatrix<double> GetVertices();
 
