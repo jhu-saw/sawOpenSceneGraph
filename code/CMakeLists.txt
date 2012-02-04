@@ -40,13 +40,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
 
   include (${CISST_USE_FILE})
 
-  if( OpenCV2_FOUND )
-#    set( SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV ON )
-    mark_as_advanced( FORCE ${OpenCV2_OPTIONS})
-  endif( OpenCV2_FOUND )
-
-  SET(
-    HEADER_FILES
+  SET(HEADER_FILES
     ${HEADER_FILES}
 
     ../osaOSGBH.h
@@ -72,121 +66,126 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     ../mtsOSGManipulatorTask.h
 
     ../svlOSGImage.h
-
     )
 
-    SET(
-      SOURCE_FILES
-      ${SOURCE_FILES}
+  SET(SOURCE_FILES
+    ${SOURCE_FILES}
 
-      osaOSGBH.cpp
-      osaOSGBody.cpp
-      osaOSGCamera.cpp
-      osaOSGHUD.cpp
-      osaOSGImage.cpp
-      osaOSGManipulator.cpp
-      osaOSGMono.cpp
-      osaOSGPick.cpp
-      osaOSGStereo.cpp
-      osaOSGWorld.cpp
+    osaOSGBH.cpp
+    osaOSGBody.cpp
+    osaOSGCamera.cpp
+    osaOSGHUD.cpp
+    osaOSGImage.cpp
+    osaOSGManipulator.cpp
+    osaOSGMono.cpp
+    osaOSGPick.cpp
+    osaOSGStereo.cpp
+    osaOSGWorld.cpp
 
-      mtsOSGBody.cpp
+    mtsOSGBody.cpp
 
-      mtsOSGCameraTask.cpp
-      mtsOSGImage.cpp
+    mtsOSGCameraTask.cpp
+    mtsOSGImage.cpp
 
-      mtsOSGManipulatorTask.cpp
+    mtsOSGManipulatorTask.cpp
 
-      svlOSGImage.cpp
+    svlOSGImage.cpp
+    )
 
-      )
+  # message( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
 
-#    message( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
-    set(
-      SAW_OPENSCENEGRAPH_INCLUDE_DIRS
-      ${INCLUDE_OUTPUT_PATH}
-      ${OPENSCENEGRAPH_INCLUDE_DIRS} )
-    set( SAW_OPENSCENEGRAPH_LINK_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} )
-#    message( ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
+  set(SAW_OPENSCENEGRAPH_INCLUDE_DIRS
+    ${INCLUDE_OUTPUT_PATH}
+    ${OPENSCENEGRAPH_INCLUDE_DIRS}
+    )
 
-    if( OpenCV2_FOUND )
-      set(
-	SAW_OPENSCENEGRAPH_INCLUDE_DIRS
-	${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
-#	${OpenCV2_INCLUDE_DIRS} )
+  set(SAW_OPENSCENEGRAPH_LINK_LIBRARIES
+    ${OPENSCENEGRAPH_LIBRARIES}
+    )
 
-      set(
-	SAW_OPENSCENEGRAPH_LINK_LIBRARIES
-	${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
-#	${OpenCV2_LIBRARIES} )
-    endif( OpenCV2_FOUND )
+  cisst_cmake_debug("SAW_OPENSCENEGRAPH_INCLUDE_DIRS: ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS}")
 
-    include_directories( ${CISST_INCLUDE_DIR} ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
+  # Enable OpenCV integration
+  if( OpenCV2_FOUND )
+    mark_as_advanced( FORCE ${OpenCV2_OPTIONS})
 
-    add_library( sawOpenSceneGraph ${HEADER_FILES} ${SOURCE_FILES} )
+    #set( SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV ON )
 
-    target_link_libraries(
-      sawOpenSceneGraph
-      ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
+    #list(APPEND SAW_OPENSCENEGRAPH_INCLUDE_DIRS ${OpenCV2_INCLUDE_DIRS} )
+    #list(APPEND SAW_OPENSCENEGRAPH_LINK_LIBRARIES ${OpenCV2_LIBRARIES} )
+  endif( OpenCV2_FOUND )
 
-    cisst_target_link_libraries( sawOpenSceneGraph ${REQUIRED_CISST_LIBRARIES} )
+  # Configure build targets
+  include_directories(
+    ${CISST_INCLUDE_DIR}
+    ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS}
+    )
 
-    set(
-      sawOpenSceneGraph_INCLUDE_DIR
-      "${sawComponents_SOURCE_DIR}"
-      "${sawComponents_BINARY_DIR}"
-      ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
+  add_library( sawOpenSceneGraph ${HEADER_FILES} ${SOURCE_FILES} )
 
-    set(sawOpenSceneGraph_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
-    set(
-      sawOpenSceneGraph_LIBRARIES
-      sawOpenSceneGraph
-      ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
+  target_link_libraries( sawOpenSceneGraph ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
 
-    configure_file (
-      "${CMAKE_CURRENT_SOURCE_DIR}/sawOpenSceneGraphConfig.cmake.in"
-      "${sawComponents_BINARY_DIR}/sawOpenSceneGraphConfig.cmake"
-      @ONLY@)
+  cisst_target_link_libraries( sawOpenSceneGraph ${REQUIRED_CISST_LIBRARIES} )
 
-    configure_file(
-      "${CMAKE_CURRENT_SOURCE_DIR}/sawOpenSceneGraphConfig.h.in"
-      "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
-      @ONLY)
+  # Set parameters for source config file generation
+  set( sawOpenSceneGraph_INCLUDE_DIR "${sawComponents_SOURCE_DIR}" "${sawComponents_BINARY_DIR}" ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
+  set( sawOpenSceneGraph_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
+  set( sawOpenSceneGraph_LIBRARIES sawOpenSceneGraph ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
 
-    mark_as_advanced(
-      OPENTHREADS_INCLUDE_DIR
-      OPENTHREADS_LIBRARY
-      OPENTHREADS_LIBRARY_DEBUG
-      OSGDB_INCLUDE_DIR
-      OSGDB_LIBRARY
-      OSGDB_LIBRARY_DEBUG
-      OSGGA_INCLUDE_DIR
-      OSGGA_LIBRARY
-      OSGGA_LIBRARY_DEBUG
-      OSGTEXT_INCLUDE_DIR
-      OSGTEXT_LIBRARY
-      OSGTEXT_LIBRARY_DEBUG
-      OSGUTIL_INCLUDE_DIR
-      OSGUTIL_LIBRARY
-      OSGUTIL_LIBRARY_DEBUG
-      OSGVIEWER_INCLUDE_DIR
-      OSGVIEWER_LIBRARY
-      OSGVIEWER_LIBRARY_DEBUG
-      OSGVOLUME_INCLUDE_DIR
-      OSGVOLUME_LIBRARY
-      OSGVOLUME_LIBRARY_DEBUG
-      OSG_INCLUDE_DIR
-      OSG_LIBRARY
-      OSG_LIBRARY_DEBUG
-      )
+  # Generate config files
+  configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/sawOpenSceneGraphConfig.cmake.in"
+    "${sawComponents_BINARY_DIR}/sawOpenSceneGraphConfig.cmake"
+    @ONLY)
 
-  # Install target for headers and library
-  install (FILES ${HEADER_FILES}
-           DESTINATION include)
+  # Generate header with package configuration
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/sawOpenSceneGraphConfig.h.in"
+    "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
+    @ONLY)
 
-  install (TARGETS sawOpenSceneGraph
-           RUNTIME DESTINATION bin
-           LIBRARY DESTINATION lib
-           ARCHIVE DESTINATION lib)
+
+  # Install targets for headers and library
+  install( FILES ${HEADER_FILES}
+    DESTINATION include/sawOpenSceneGraph)
+
+  install( FILES "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
+    DESTINATION include/sawOpenSceneGraph)
+
+  install( TARGETS sawOpenSceneGraph
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
+
+  install( FILES "${sawComponents_BINARY_DIR}/sawOpenSceneGraphConfig.cmake"
+    DESTINATION ${CISST_CMAKE_MODULES_INSTALL_SUFFIX}/components)
+
+  # Hide advanced options
+  mark_as_advanced(
+    OPENTHREADS_INCLUDE_DIR
+    OPENTHREADS_LIBRARY
+    OPENTHREADS_LIBRARY_DEBUG
+    OSGDB_INCLUDE_DIR
+    OSGDB_LIBRARY
+    OSGDB_LIBRARY_DEBUG
+    OSGGA_INCLUDE_DIR
+    OSGGA_LIBRARY
+    OSGGA_LIBRARY_DEBUG
+    OSGTEXT_INCLUDE_DIR
+    OSGTEXT_LIBRARY
+    OSGTEXT_LIBRARY_DEBUG
+    OSGUTIL_INCLUDE_DIR
+    OSGUTIL_LIBRARY
+    OSGUTIL_LIBRARY_DEBUG
+    OSGVIEWER_INCLUDE_DIR
+    OSGVIEWER_LIBRARY
+    OSGVIEWER_LIBRARY_DEBUG
+    OSGVOLUME_INCLUDE_DIR
+    OSGVOLUME_LIBRARY
+    OSGVOLUME_LIBRARY_DEBUG
+    OSG_INCLUDE_DIR
+    OSG_LIBRARY
+    OSG_LIBRARY_DEBUG
+    )
 
 endif( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )

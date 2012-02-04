@@ -1,7 +1,7 @@
 #
 # $Id$
 #
-# (C) Copyright 2009 Johns Hopkins University (JHU), All Rights
+# (C) Copyright 2012 Johns Hopkins University (JHU), All Rights
 # Reserved.
 #
 # --- begin cisst license - do not edit ---
@@ -11,9 +11,6 @@
 # http://www.cisst.org/cisst/license.txt.
 # 
 # --- end cisst license ---
-
-
-
 
 set( 
   REQUIRED_CISST_LIBRARIES 
@@ -27,11 +24,11 @@ set(
      cisstStereoVision )
 
 find_package( cisst REQUIRED ${REQUIRED_CISST_LIBRARIES} )
-find_package( sawOpenSceneGraph REQUIRED HINTS "${saw_BINARY_DIR}/components" )
 
 if( cisst_FOUND_AS_REQUIRED AND sawOpenSceneGraph_FOUND )
 
   include( ${CISST_USE_FILE} )
+  cisst_find_component( sawOpenSceneGraph )
 
   include_directories( ${sawOpenSceneGraph_INCLUDE_DIR} )
   link_directories( ${sawOpenSceneGraph_LIBRARY_DIR} )
