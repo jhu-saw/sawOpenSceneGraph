@@ -22,8 +22,7 @@ set (REQUIRED_CISST_LIBRARIES
      cisstParameterTypes
      cisstStereoVision )
 
-set(
-  REQUIRED_OPENSCENEGRAPH_LIBRARIES
+set( REQUIRED_OPENSCENEGRAPH_LIBRARIES
   osgDB
   osgGA
   osgViewer
@@ -34,11 +33,13 @@ set(
 
 find_package( cisst REQUIRED ${REQUIRED_CISST_LIBRARIES} )
 find_package( OpenSceneGraph REQUIRED ${REQUIRED_OPENSCENEGRAPH_LIBRARIES} )
-find_package( OpenCV2 )
 
 if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
 
   include (${CISST_USE_FILE})
+
+  # FindOpenCV2.cmake is included with CISST
+  find_package( OpenCV2 ) 
 
   SET(HEADER_FILES
     ${HEADER_FILES}
