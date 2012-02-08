@@ -23,25 +23,33 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
 					      double period,
 					      osaOSGManipulator* manipulator,
 					      osaCPUMask cpumask,
-					      int priority ) :
+					      int priority,
+					      InputType inputtype ) :
   mtsTaskPeriodic( name, period, true ),
   manipulator( manipulator ),
-  input( NULL ),
+  inputtype( inputtype ),
+  inputp( NULL ),
+  inputr( NULL ),
   output( NULL ),
   ctl( NULL ),
   cpumask( cpumask ),
   priority( priority ){
 
-  input = AddInterfaceProvided( "Input" );
-  if( input ){
-
-    StateTable.AddData( qin, "PositionJointInput" );
-    input->AddCommandWriteState( StateTable, qin, "SetPositionJoint" );
+  if( inputtype == mtsOSGManipulatorTask::PROVIDE_INPUT ){
+    inputp = AddInterfaceProvided( "Input" );
+    if( inputp ){
+      StateTable.AddData( qin, "PositionJointInput" );
+      inputp->AddCommandWriteState( StateTable, qin, "SetPositionJoint" );
+    }
+    else{
+      CMN_LOG_RUN_ERROR << "Failed to create interface Input for " << GetName()
+			<< std::endl;
+    }
 
   }
-  else{
-    CMN_LOG_RUN_ERROR << "Failed to create interface Input for " << GetName()
-		      << std::endl;
+  else{ 
+    inputr = AddInterfaceRequired( "Input" );
+    inputr->AddFunction( "GetPositionJoint", GetPositionJoint ); 
   }
 
   output = AddInterfaceProvided( "Output" );
@@ -57,8 +65,7 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
     CMN_LOG_RUN_ERROR << "Failed to create interface Output for " << GetName()
 		      << std::endl;
   }
-
-  }
+}
 
 void mtsOSGManipulatorTask::Run(){
 
@@ -66,7 +73,16 @@ void mtsOSGManipulatorTask::Run(){
 
   if( manipulator.get() != NULL ){
 
-    if( manipulator->SetPositions( qin.Goal() ) !=
+    vctDynamicVector<double> qinput;
+    if( inputtype == PROVIDE_INPUT )
+      { qinput = qin.Goal(); }
+    else{ 
+      prmPositionJointGet prmqinput;
+      GetPositionJoint( prmqinput );
+      prmqinput.GetPosition( qinput );
+    }
+
+    if( manipulator->SetPositions( qinput ) !=
 	osaOSGManipulator::ESUCCESS ){
       CMN_LOG_RUN_ERROR << "Failed to get position for " << GetName()
 			<< std::endl;
@@ -82,7 +98,7 @@ void mtsOSGManipulatorTask::Run(){
     vctMatrixRotation3<double> R( Rt4x4.Rotation() );
     vctQuaternionRotation3<double> q( R, VCT_NORMALIZE );
     Rtout.Position() = vctFrm3( q, Rt4x4.Translation() );
-
+    //std::cout << Rt4x4 << std::endl;
   }
 
 }

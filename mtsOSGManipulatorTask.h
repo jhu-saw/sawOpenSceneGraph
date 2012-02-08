@@ -19,6 +19,7 @@ http://www.cisst.org/cisst/license.txt.
 
 #include <cisstMultiTask/mtsTaskPeriodic.h>
 #include <cisstMultiTask/mtsInterfaceProvided.h>
+#include <cisstMultiTask/mtsInterfaceRequired.h>
 
 #include <cisstParameterTypes/prmPositionJointGet.h>
 #include <cisstParameterTypes/prmPositionCartesianGet.h>
@@ -31,6 +32,10 @@ http://www.cisst.org/cisst/license.txt.
 
 class CISST_EXPORT mtsOSGManipulatorTask : public mtsTaskPeriodic {
 
+ public:
+
+  enum InputType{ PROVIDE_INPUT, REQUIRE_INPUT };
+
  private:
 
   osg::ref_ptr<osaOSGManipulator> manipulator;
@@ -39,7 +44,10 @@ class CISST_EXPORT mtsOSGManipulatorTask : public mtsTaskPeriodic {
   prmPositionJointGet qout;
   prmPositionJointSet qin;
 
-  mtsInterfaceProvided* input;
+  mtsOSGManipulatorTask::InputType inputtype;
+  mtsFunctionRead GetPositionJoint;
+  mtsInterfaceProvided* inputp;
+  mtsInterfaceRequired* inputr;
   mtsInterfaceProvided* output;
   mtsInterfaceProvided* ctl;
 
@@ -52,8 +60,10 @@ class CISST_EXPORT mtsOSGManipulatorTask : public mtsTaskPeriodic {
 			 double period,
 			 osaOSGManipulator* manipulator,
 			 osaCPUMask cpumask,
-			 int priority );
-
+			 int priority,
+			 mtsOSGManipulatorTask::InputType inputtype = 
+			 mtsOSGManipulatorTask::PROVIDE_INPUT );
+  
   ~mtsOSGManipulatorTask(){}
 
   void Configure( const std::string& CMN_UNUSED(argv) = "" ){}

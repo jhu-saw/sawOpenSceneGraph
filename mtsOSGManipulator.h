@@ -25,6 +25,8 @@ class mtsOSGManipulator : public mtsOSGManipulatorTask {
 
  public:
 
+  enum InputType{ PROVIDE_INPUT, REQUIRE_INPUT };
+
   mtsOSGManipulator( const std::string& name,
 		     double period,
 		     osaCPUMask cpumask,
@@ -33,10 +35,19 @@ class mtsOSGManipulator : public mtsOSGManipulatorTask {
 		     osaOSGWorld* world,
 		     const vctFrame4x4<double>& Rtw0,
 		     const std::string& robfilename,
-		     const std::string& basemodel ):
-    mtsOSGManipulatorTask( name, period, 
-			   new osaOSGManipulator(models,world,Rtw0,robfilename,basemodel),
-			   cpumask, priority ){}
+		     const std::string& basemodel,
+		     mtsOSGManipulatorTask::InputType inputtype =
+		     mtsOSGManipulatorTask::PROVIDE_INPUT ):
+    mtsOSGManipulatorTask( name,
+			   period, 
+			   new osaOSGManipulator( models,
+						  world,
+						  Rtw0,
+						  robfilename,
+						  basemodel ),
+			   cpumask, 
+			   priority,
+			   inputtype ){}
   
   // main constructor
   mtsOSGManipulator( const std::string& name,
@@ -47,11 +58,20 @@ class mtsOSGManipulator : public mtsOSGManipulatorTask {
 		     osaOSGWorld* world,
 		     const vctFrm3& Rtw0,
 		     const std::string& robfilename,
-		     const std::string& basemodel ):
+		     const std::string& basemodel,
+		     mtsOSGManipulatorTask::InputType inputtype =
+		     mtsOSGManipulatorTask::PROVIDE_INPUT ):
 
-    mtsOSGManipulatorTask( name, period, 
-			   new osaOSGManipulator(models,world,Rtw0,robfilename,basemodel),
-			   cpumask, priority ){}
+    mtsOSGManipulatorTask( name, 
+			   period, 
+			   new osaOSGManipulator( models,
+						  world,
+						  Rtw0,
+						  robfilename,
+						  basemodel ),
+			   cpumask, 
+			   priority,
+			   inputtype ){}
 };
 
 #endif
