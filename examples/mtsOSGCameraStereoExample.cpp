@@ -74,7 +74,9 @@ public:
     // rotate hubble
     vctFixedSizeVector<double,3> u( 0.0, 0.0, 1.0 );
     vctAxisAngleRotation3<double> Rwh( u, theta );
-    vctFrm3 Rtwh( Rwh, vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
+    vctFrm3 Rtwh;
+    Rtwh.Rotation().FromRaw( Rwh );
+    Rtwh.Translation().Assign( vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
 
     Rt.Position() = Rtwh;
     theta += 0.001;

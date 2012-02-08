@@ -99,10 +99,7 @@ void mtsOSGManipulatorTask::Run(){
 			<< std::endl;
     }
 
-    vctFrame4x4<double> Rt4x4 = manipulator->ForwardKinematics( qinput );
-    vctMatrixRotation3<double> R( Rt4x4.Rotation() );
-    vctQuaternionRotation3<double> q( R, VCT_NORMALIZE );
-    Rtout.Position() = vctFrm3( q, Rt4x4.Translation() );
+    Rtout.Position().FromRaw( manipulator->ForwardKinematics( qinput ) );
 
   }
 
