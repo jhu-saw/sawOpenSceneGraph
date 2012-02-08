@@ -48,18 +48,23 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
 
   }
   else{ 
-    inputr = AddInterfaceRequired( "Input" );
-    inputr->AddFunction( "GetPositionJoint", GetPositionJoint ); 
+    inputr = AddInterfaceRequired( "Input", MTS_OPTIONAL );
+    if( inputr )
+      { inputr->AddFunction( "GetPositionJoint", GetPositionJoint ); }
+    else{
+      CMN_LOG_RUN_ERROR << "Failed to create interface Input for " << GetName()
+			<< std::endl;
+    }
   }
 
   output = AddInterfaceProvided( "Output" );
   if( output ){
-
+    
     StateTable.AddData( qout,  "PositionJointOutput" );
     StateTable.AddData( Rtout, "PositionCartesianOutput" );
     output->AddCommandReadState( StateTable, Rtout, "GetPositionCartesian" );
     output->AddCommandReadState( StateTable, qout,  "GetPositionJoint" );
-
+    
   }
   else{
     CMN_LOG_RUN_ERROR << "Failed to create interface Output for " << GetName()
@@ -94,11 +99,11 @@ void mtsOSGManipulatorTask::Run(){
 			<< std::endl;
     }
 
-    vctFrame4x4<double> Rt4x4 = manipulator->ForwardKinematics( qin.Goal() );
+    vctFrame4x4<double> Rt4x4 = manipulator->ForwardKinematics( qinput );
     vctMatrixRotation3<double> R( Rt4x4.Rotation() );
     vctQuaternionRotation3<double> q( R, VCT_NORMALIZE );
     Rtout.Position() = vctFrm3( q, Rt4x4.Translation() );
-    //std::cout << Rt4x4 << std::endl;
+
   }
 
 }

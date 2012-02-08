@@ -25,10 +25,10 @@ set(
 
 find_package( cisst REQUIRED ${REQUIRED_CISST_LIBRARIES} )
 
-if( cisst_FOUND_AS_REQUIRED AND sawOpenSceneGraph_FOUND )
+if( cisst_FOUND_AS_REQUIRED )
 
   include( ${CISST_USE_FILE} )
-  cisst_find_component( sawOpenSceneGraph )
+  cisst_find_component( sawOpenSceneGraph REQUIRED )
 
   include_directories( ${sawOpenSceneGraph_INCLUDE_DIR} )
   link_directories( ${sawOpenSceneGraph_LIBRARY_DIR} )
@@ -86,5 +86,5 @@ if( cisst_FOUND_AS_REQUIRED AND sawOpenSceneGraph_FOUND )
   cisst_target_link_libraries( svlOSGImageSequenceExample ${REQUIRED_CISST_LIBRARIES} ) 
   cisst_target_link_libraries( svlOSGCameraHUDExample     ${REQUIRED_CISST_LIBRARIES} ) 
 
-endif( cisst_FOUND_AS_REQUIRED AND sawOpenSceneGraph_FOUND )
+endif( cisst_FOUND_AS_REQUIRED )
 
