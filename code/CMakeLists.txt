@@ -67,6 +67,8 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     ../mtsOSGManipulatorTask.h
 
     ../svlOSGImage.h
+
+    ../sawOpenSceneGraphExport.h
     )
 
   SET(SOURCE_FILES
