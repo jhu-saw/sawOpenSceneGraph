@@ -9,12 +9,14 @@ osaOSGMono::osaOSGMono( osaOSGWorld* world,
 			double zNear, double zFar,
 			bool trackball,
 			const vctFrame4x4<double>& Rtoffset,
+			bool quadbufferstereo,
 			bool offscreenrendering ) :
   osaOSGCamera( world, trackball, Rtoffset, offscreenrendering ),
   x( x ),                              // x position
   y( y ),                              // y position
   width( width ),                      // width of images
-  height( height ){
+  height( height ),
+  quadbufferstereo( quadbufferstereo ){
   
   // Set the intrinsic paramters
   getCamera()->setProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
@@ -57,7 +59,8 @@ void osaOSGMono::Initialize(){
   traits->height = height;
   traits->windowDecoration = true;
   traits->doubleBuffer = true;
-  if( IsOffscreenRenderingEnabled() ){ traits->pbuffer = true; }
+  if( IsQuadBufferStereoEnabled() ) { traits->quadBufferStereo = true; }
+  if( IsOffscreenRenderingEnabled() ) { traits->pbuffer = true; }
   traits->sharedContext = 0;
   
   // Get the master camera

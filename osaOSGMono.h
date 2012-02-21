@@ -23,6 +23,10 @@ class CISST_EXPORT osaOSGMono : public osaOSGCamera {
   //! Image height
   int height;
 
+  // set this to true if you want to render quad buffer stereo
+  bool quadbufferstereo;
+  bool IsQuadBufferStereoEnabled() const { return quadbufferstereo; }
+
  public : 
 
   //! Create an OSG mono camera (master camera)
@@ -49,6 +53,7 @@ class CISST_EXPORT osaOSGMono : public osaOSGCamera {
 	      double zNear, double zFar,
 	      bool trackball = true,
 	      const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>(),
+	      bool quadbufferstereo = false,
 	      bool offscreenrendering = false );
   
   ~osaOSGMono();

@@ -2,6 +2,7 @@
 #include <sawOpenSceneGraph/osaOSGHUD.h>
 #include <osg/MatrixTransform>
 #include <osgGA/TrackballManipulator>
+#include <osgViewer/ViewerEventHandlers>
 
 #include <cisstVector/vctQuaternionRotation3.h>
 
@@ -328,9 +329,6 @@ osaOSGCamera::osaOSGCamera( osaOSGWorld* world,
   Rtoffset( Rtoffset ),
   offscreenrendering( offscreenrendering ){
   
-  // Add a timeout as it can take time to load the windows
-  //SetInitializationDelay( 15.0 );
-  
   // Set the scene
   setSceneData( world );
 
@@ -354,6 +352,8 @@ osaOSGCamera::osaOSGCamera( osaOSGWorld* world,
 					     osg::Vec3d( 0,1,0 ) );
     home();
   }
+
+  addEventHandler( new osgViewer::StatsHandler );
 
   /*
   osg::StateSet* state = world->getOrCreateStateSet();
@@ -387,6 +387,17 @@ void osaOSGCamera::AddHUD( osaOSGHUD* hud )
 // This is called from the OSG update callback thread
 void osaOSGCamera::UpdateTransform()
 { 
+  /*
+  if( getCameraManipulator() ){
+    osg::Matrixd mat = getCameraManipulator()->getMatrix();
+    for( int r=0; r<4; r++ ){
+      for( int c=0; c<4; c++ ){
+	std::cout << mat(r,c) <<" ";
+      }
+      std::cout << std::endl;
+    }
+  }
+  */
   getCamera()->setViewMatrix( osgtransform );
 }
 

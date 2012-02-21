@@ -48,7 +48,7 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
 
   }
   else{ 
-    inputr = AddInterfaceRequired( "Input", MTS_OPTIONAL );
+    inputr = AddInterfaceRequired( "Input" );
     if( inputr )
       { inputr->AddFunction( "GetPositionJoint", GetPositionJoint ); }
     else{
@@ -70,6 +70,7 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
     CMN_LOG_RUN_ERROR << "Failed to create interface Output for " << GetName()
 		      << std::endl;
   }
+
 }
 
 void mtsOSGManipulatorTask::Run(){
