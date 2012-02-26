@@ -131,7 +131,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
   cisst_target_link_libraries( sawOpenSceneGraph ${REQUIRED_CISST_LIBRARIES} )
 
   # Set parameters for source config file generation
-  set( sawOpenSceneGraph_INCLUDE_DIR "${sawComponents_SOURCE_DIR}" "${sawComponents_BINARY_DIR}" ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
+  set( sawOpenSceneGraph_INCLUDE_DIRS "${sawComponents_SOURCE_DIR}" "${sawComponents_BINARY_DIR}" ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
   set( sawOpenSceneGraph_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
   set( sawOpenSceneGraph_LIBRARIES sawOpenSceneGraph ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
 
@@ -147,6 +147,9 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
     @ONLY)
 
+  # Copy all the header files to the build tree
+  file( COPY ${HEADER_FILES}
+    DESTINATION "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph" )
 
   # Install targets for headers and library
   install( FILES ${HEADER_FILES}

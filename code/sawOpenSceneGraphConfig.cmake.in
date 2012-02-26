@@ -12,6 +12,7 @@
 # 
 # --- end cisst license ---
 
-set( sawOpenSceneGraph_INCLUDE_DIR "@sawOpenSceneGraph_INCLUDE_DIR@" )
+set( sawOpenSceneGraph_INCLUDE_DIR "@sawOpenSceneGraph_INCLUDE_DIRS@" )
+set( sawOpenSceneGraph_INCLUDE_DIRS "@sawOpenSceneGraph_INCLUDE_DIRS@" )
 set( sawOpenSceneGraph_LIBRARY_DIR "@sawOpenSceneGraph_LIBRARY_DIR@" )
 set( sawOpenSceneGraph_LIBRARIES   "@sawOpenSceneGraph_LIBRARIES@" )
