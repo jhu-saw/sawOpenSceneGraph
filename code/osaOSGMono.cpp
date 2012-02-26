@@ -45,6 +45,7 @@ osaOSGMono::osaOSGMono( osaOSGWorld* world,
 }
 
 osaOSGMono::~osaOSGMono(){}
+#include <osg/DisplaySettings>
 
 void osaOSGMono::Initialize(){
 
@@ -59,10 +60,13 @@ void osaOSGMono::Initialize(){
   traits->height = height;
   traits->windowDecoration = true;
   traits->doubleBuffer = true;
-  if( IsQuadBufferStereoEnabled() ) { traits->quadBufferStereo = true; }
+  if( IsQuadBufferStereoEnabled() ){ traits->quadBufferStereo = true; }
   if( IsOffscreenRenderingEnabled() ) { traits->pbuffer = true; }
   traits->sharedContext = 0;
   
+  //osg::DisplaySettings::instance()->setStereo( true );
+  //osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::QUAD_BUFFER );
+
   // Get the master camera
   osg::ref_ptr<osg::Camera> camera = getCamera();
   //camera->setName( GetName() );

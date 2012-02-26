@@ -87,7 +87,7 @@ int svlOSGImage::Process( svlProcInfo* procInfo,
 		    img->GetHeight( 0 ),
 		    1,
 		    3,
-		    GL_RGB,
+		    GL_BGR,
 		    GL_UNSIGNED_BYTE,
 		    img->GetUCharPointer( 0 ),
 		    osg::Image::NO_DELETE );

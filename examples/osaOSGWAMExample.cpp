@@ -2,7 +2,7 @@
 #include <sawOpenSceneGraph/osaOSGMono.h>
 #include <sawOpenSceneGraph/osaOSGManipulator.h>
 
-int main(){
+int main( int argc, char** argv ){
 
   cmnLogger::SetMask( CMN_LOG_ALLOW_ALL );
   cmnLogger::SetMaskFunction( CMN_LOG_ALLOW_ALL );
@@ -16,9 +16,12 @@ int main(){
   double Znear = 0.1, Zfar = 10.0;
   osg::ref_ptr< osaOSGCamera > camera;
   camera = new osaOSGMono( world,
-			     x, y, width, height,
-			     55.0, ((double)width)/((double)height),
-			     Znear, Zfar );
+			   x, y, width, height,
+			   55.0, ((double)width)/((double)height),
+			   Znear, Zfar, 
+			   true,
+			   vctFrame4x4<double>(),
+			   true );
   camera->Initialize();
 
   
@@ -35,6 +38,7 @@ int main(){
   models.push_back( path + "l7.obj" );
 
   osg::ref_ptr<osaOSGManipulator> wam;
+
   wam = new osaOSGManipulator( models,
 				 world,
 				 Rtw0,
@@ -45,12 +49,11 @@ int main(){
 
   vctDynamicVector<double> q( 7, 0.0 );
   while( !camera->done() ){
-    
     for( size_t i=0; i<7; i++ ) q[i] += 0.001;
     wam->SetPositions( q );
     camera->frame();
-
   }
+
 
   return 0;
 

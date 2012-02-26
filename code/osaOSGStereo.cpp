@@ -3,6 +3,126 @@
 
 osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
 			    int x, int y, int width, int height,
+			    const vctFixedSizeMatrix<double,3,3>& Kl,
+			    const vctFixedSizeMatrix<double,3,3>& Kr,
+			    const vctFrame4x4<double>& vctRt,
+			    double zNear, double zFar,
+			    bool trackball,
+			    const vctFrame4x4<double>& Rtoffset ) :
+  osaOSGCamera( world, trackball, Rtoffset ),
+  x( x ),                              // x position
+  y( y ),                              // y position
+  width( width ),                      // width of images
+  height( height ),
+  baseline( baseline ){
+
+  double x0 = 0;
+  double y0 = 0;
+
+  // Set the intrinsic paramters
+  getCamera()->setProjectionMatrix( osg::Matrixd() );
+
+  // Setup the left camera
+  {
+    osg::Matrixd K;
+
+    double K00 = Kl[0][0]; // 526.0554;
+    double K11 = Kl[1][1]; // 525.0756;
+    double K02 = Kl[0][2]; // 313.2596;
+    double K12 = Kl[1][2]; // 233.6962;
+
+    K( 0, 0 ) = 2*K00/width;
+    K( 1, 0 ) = 0.0;
+    K( 2, 0 ) = (width - 2*K02 + 2*x0)/width;
+    K( 3, 0 ) = 0;
+    
+    K( 0, 1 ) = 0.0;
+    K( 1, 1 ) = 2*K11/height;
+    K( 2, 1 ) = (-height + 2*K12 + 2*y0)/height;
+    K( 3, 1 ) = 0;
+    
+    K( 0, 2 ) = 0.0;
+    K( 1, 2 ) = 0.0;
+    K( 2, 2 ) = (-zFar - zNear)/(zFar - zNear);
+    K( 3, 2 ) = -2*zFar*zNear/(zFar - zNear);
+    
+    K( 0, 3 ) = 0.0;
+    K( 1, 3 ) = 0.0;
+    K( 2, 3 ) = -1;
+    K( 3, 3 ) = 0.0;
+    
+    // Create a new (slave) camera
+    osg::ref_ptr<osg::Camera> camera = new osg::Camera;
+
+    // Create the view port. Again, the reason why the viewport is created here
+    // is because the SVL stuff in the final draw callback needs to be created
+    // during the constructor
+    camera->setViewport( new osg::Viewport( 0, 0, width, height) );
+
+    // add this slave camera to the viewer, with a shift left of the
+    // projection matrix
+    addSlave( camera.get(),  K, osg::Matrixd() );
+
+  }
+  
+  // setup the right camera
+  {
+ 
+    osg::Matrixd K;
+    
+    double K00 = Kr[0][0]; // 534.6877;
+    double K11 = Kr[1][1]; // 533.5979;
+    double K02 = Kr[0][2]; // 327.7359;
+    double K12 = Kr[1][2]; // 249.4243;
+    
+    K( 0, 0 ) =  2*K00/width;
+    K( 1, 0 ) =  0.0;
+    K( 2, 0 ) = (width - 2*K02 + 2*x0)/width;
+    K( 3, 0 ) = 0;
+    
+    K( 0, 1 ) =  0.0;
+    K( 1, 1 ) = 2*K11/height;
+    K( 2, 1 ) = (-height + 2*K12 + 2*y0)/height;
+    K( 3, 1 ) = 0;
+    
+    K( 0, 2 ) =  0.0;
+    K( 1, 2 ) = 0.0;
+    K( 2, 2 ) = -(zFar + zNear)/(zFar - zNear);
+    K( 3, 2 ) = -2*zFar*zNear/(zFar - zNear);
+    
+    K( 0, 3 ) = 0.0;
+    K( 1, 3 ) = 0.0;
+    K( 2, 3 ) = -1;
+    K( 3, 3 ) = 0.0;
+
+    /*
+    osg::Matrixd( 0.9887,  0.0085,  0.1500,  0.0,
+		  -0.0126,  0.9996,  0.0261   0.0,
+		  -0.1497, -0.0277,  0.9883,  0.0,
+		  -0.0410,  0.0000, -0.0042,  1.0000 ) );
+    */
+    osg::Matrixd osgRt( vctRt[0][0], vctRt[1][0], vctRt[2][0], 0.0,
+			vctRt[0][1], vctRt[1][1], vctRt[2][1], 0.0,
+			vctRt[0][2], vctRt[1][2], vctRt[2][2], 0.0,
+			vctRt[0][3], vctRt[1][3], vctRt[2][3], 1.0 );
+    
+    // Create a new (slave) camera
+    osg::ref_ptr<osg::Camera> camera = new osg::Camera;
+
+    // Create the view port. Again, the reason why the viewport is created here
+    // is because the SVL stuff in the final draw callback needs to be created
+    // during the constructor
+    camera->setViewport( new osg::Viewport( 0, 0, width, height) );
+    
+    // add this slave camera to the viewer, with a shift right of the 
+    // projection matrix                                  
+    addSlave( camera.get(), K, osgRt );
+  }
+
+}
+
+osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
+			    int x, int y, int width, int height,
 			    double fovy, double aspectRatio,
 			    double zNear, double zFar,
 			    double baseline, 
@@ -16,7 +136,7 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
   baseline( baseline ){
 
   // Set the intrinsic paramters
-  getCamera()->setProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
+  getCamera()->setProjectionMatrixAsPerspective(fovy, aspectRatio, zNear,zFar);
 
   // Setup the left camera
   {
@@ -30,9 +150,7 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
 
     // add this slave camera to the viewer, with a shift left of the
     // projection matrix
-    addSlave( camera.get(), 
-	      osg::Matrixd(),
-	      osg::Matrixd::translate( baseline/2.0, 0.0, 0.0 ) );
+    addSlave( camera.get(), osg::Matrixd(), osg::Matrixd() );
 
     // Only do drawing callback if OpenCV is enabled
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
@@ -54,6 +172,7 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
 
   // setup the right camera
   {
+ 
     // Create a new (slave) camera
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
 
@@ -64,9 +183,8 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
     
     // add this slave camera to the viewer, with a shift right of the 
     // projection matrix                                  
-    addSlave( camera.get(), 
-	      osg::Matrixd(),
-	      osg::Matrixd::translate( -baseline/2.0, 0.0, 0.0 ) );
+    addSlave( camera.get(), osg::Matrixd(), osg::Matrixd() );
+
 
     // Only do drawing callback if OpenCV is enabled
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV

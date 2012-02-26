@@ -39,15 +39,33 @@ class mtsOSGStereo : public mtsOSGCameraTask {
 		double baseline,
 		bool trackball = true,
 		const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>() ) :
-    mtsOSGCameraTask( name, 
-		      new osaOSGStereo( world,
-					x, y, 
-					width, height, 
-					fovy, aspectRatio, 
-					zNear, zFar,
-					baseline,
+  mtsOSGCameraTask( name, 
+		    new osaOSGStereo( world,
+				      x, y, 
+				      width, height, 
+				      fovy, aspectRatio, 
+				      zNear, zFar,
+				      baseline,
+				      trackball,
+				      Rtoffset ) ){}
+  
+ mtsOSGStereo( const std::string& name,
+	       osaOSGWorld* world,
+	       int x, int y, int width, int height,
+	       const vctFixedSizeMatrix<double,3,3>& Kl,
+	       const vctFixedSizeMatrix<double,3,3>& Kr,
+	       const vctFrame4x4<double>& vctRt,
+	       double zNear, double zFar,
+	       bool trackball,
+	       const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>() ) :
+  mtsOSGCameraTask( name, 
+		    new osaOSGStereo( world,
+				      x, y, 
+				      width, height, 
+				      Kl, Kr, vctRt,
+				      zNear, zFar,
 					trackball,
-					Rtoffset ) ){}
+				      Rtoffset ) ){}
   
   ~mtsOSGStereo(){}
 

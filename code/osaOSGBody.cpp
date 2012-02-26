@@ -19,7 +19,8 @@ http://www.cisst.org/cisst/license.txt.
 #include <osg/PolygonMode>
 #include <osg/Point>
 #include <osg/Material>
-
+#include <osg/BlendFunc> 
+#include <osg/AlphaFunc>
 #include <algorithm>
 
 #include <sawOpenSceneGraph/osaOSGBody.h>
@@ -27,11 +28,74 @@ http://www.cisst.org/cisst/license.txt.
 
 const vctFixedSizeVector<unsigned char,3> osaOSGBody::RGBDEFAULT = vctFixedSizeVector<unsigned char,3>( 255, 0, 0 );
 
+osaOSGBody::TransparencyVisitor::TransparencyVisitor() :
+  osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ){}
+
+//void osaOSGBody::GeodeVisitor::apply( osg::Geode& geode  ){
+void osaOSGBody::TransparencyVisitor::apply( osg::Geode& geode  ){
+
+  // for each drawable
+  for( size_t i=0; i<geode.getNumDrawables(); i++ ){
+
+    // set blending
+    osg::StateSet* stateset = geode.getDrawable(i)->getOrCreateStateSet();
+    stateset->setMode( GL_BLEND, 
+		       osg::StateAttribute::ON | 
+		       osg::StateAttribute::OVERRIDE );
+    stateset->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
+  
+
+    // change the alpha of the color (no material)
+    if( geode.getDrawable(i)->asGeometry() ){
+
+      // get the geometry
+      osg::ref_ptr<osg::Geometry> geometry;
+      geometry = geode.getDrawable(i)->asGeometry();
+
+      // get its color
+      osg::ref_ptr<osg::Vec4Array> colorarray;
+      colorarray = dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
+
+      if( colorarray ){
+	for( unsigned int i=0; i<colorarray->size(); i++ ){
+	  osg::Vec4* color= &colorarray->operator[](i);
+	  color->set( color->x(), color->y(), color->z(), alpha );
+	}
+      }
+    }
+
+    // change the alpha of the material
+    osg::StateAttribute* attribute;
+    attribute = stateset->getAttribute( osg::StateAttribute::MATERIAL );
+
+    osg::ref_ptr<osg::Material> material;
+    material = dynamic_cast<osg::Material*>( attribute );
+    
+    if( material != NULL ){
+
+      material->setAlpha( osg::Material::FRONT_AND_BACK, alpha );
+      stateset->setAttributeAndModes( material.get(), 
+				      osg::StateAttribute::ON | 
+				      osg::StateAttribute::OVERRIDE );
+      osg::BlendFunc* bf;
+      bf = new osg::BlendFunc( osg::BlendFunc::SRC_ALPHA,
+			       osg::BlendFunc::ONE_MINUS_SRC_ALPHA );
+      stateset->setAttributeAndModes(bf);
+
+    }
+    
+  }
+
+  traverse( geode );
+
+}
+
 // Default constructor for the geode visitor
 osaOSGBody::GeodeVisitor::GeodeVisitor() : 
   osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ){}
 
 // Method called for each geode during the traversal
+//void osaOSGBody::GeodeVisitor::apply( osg::Geode& geode  ){
 void osaOSGBody::GeodeVisitor::apply( osg::Geode& geode  ){
 
   for( size_t i=0; i< geode.getNumDrawables(); ++i ){
@@ -63,6 +127,7 @@ osaOSGBody::GeodeVisitor::TriangleExtractor::operator ()
 }
 
 
+
 // This is called at each update traversal
 void osaOSGBody::TransformCallback::operator()( osg::Node* node, 
 						  osg::NodeVisitor* nv ){
@@ -79,7 +144,7 @@ void osaOSGBody::TransformCallback::operator()( osg::Node* node,
 
 // This is called at each update traversal
 void osaOSGBody::SwitchCallback::operator()( osg::Node* node, 
-					       osg::NodeVisitor* nv ){
+					     osg::NodeVisitor* nv ){
 
   osg::Referenced* data = node->getUserData();
   osaOSGBody::UserData* userdata;
@@ -104,28 +169,30 @@ osaOSGBody::osaOSGBody(osaOSGWorld* world, const vctFrame4x4<double>& Rt) :
 }
 
 osaOSGBody::osaOSGBody( const std::string& model, 
-			    const vctFrame4x4<double>& Rt,
-			    double scale,
-			    const std::string& options ) :
+			const vctFrame4x4<double>& Rt,
+			double scale,
+			double alpha,
+			const std::string& options ) :
   transform( Rt ),
   onoff( SWITCH_ON ){
   
   Initialize( scale );
-  ReadModel( model, options );
+  ReadModel( model, options, alpha );
 
 }
 
 osaOSGBody::osaOSGBody( const std::string& model, 
-			    osaOSGWorld* world,
-			    const vctFrame4x4<double>& Rt,
-			    double scale,
-			    const std::string& options ) :
-
+			osaOSGWorld* world,
+			const vctFrame4x4<double>& Rt,
+			double scale,
+			double alpha,
+			const std::string& options ) :
+  
   transform( Rt ),
   onoff( SWITCH_ON ){
   
   Initialize( scale );
-  ReadModel( model, options );
+  ReadModel( model, options, alpha );
 
   // Once this is done add the body to the world
   if( world != NULL )
@@ -133,10 +200,29 @@ osaOSGBody::osaOSGBody( const std::string& model,
 }
 
 osaOSGBody::osaOSGBody( const std::string& model, 
-			    osaOSGWorld* world,
-			    const vctFrm3& Rt,
-			    double scale,
-			    const std::string& options ) :
+			osaOSGBody* body,
+			const vctFrame4x4<double>& Rt,
+			double scale,
+			double alpha,
+			const std::string& options ) :
+
+  transform( Rt ),
+  onoff( SWITCH_ON ){
+  
+  Initialize( scale );
+  ReadModel( model, options, alpha );
+
+  // Once this is done add the body to the world
+  if( body != NULL )
+    { body->osgtransform->addChild( this ); }
+}
+
+osaOSGBody::osaOSGBody( const std::string& model, 
+			osaOSGWorld* world,
+			const vctFrm3& Rt,
+			double scale,
+			double alpha,
+			const std::string& options ) :
 
   onoff( SWITCH_ON ){
 
@@ -146,7 +232,7 @@ osaOSGBody::osaOSGBody( const std::string& model,
   transform = vctFrame4x4<double>( q, Rt.Translation() );
 
   Initialize( scale );
-  ReadModel( model, options );
+  ReadModel( model, options, alpha );
 
   // Once this is done add the body to the world
   if( world != NULL )
@@ -155,10 +241,10 @@ osaOSGBody::osaOSGBody( const std::string& model,
 }
 
 osaOSGBody::osaOSGBody( const vctDynamicMatrix<double>& pointcloud,
-			    osaOSGWorld* world,
-			    const vctFrm3& Rt,
-			    const vctFixedSizeVector<unsigned char,3>& rgb,
-			    float size ):
+			osaOSGWorld* world,
+			const vctFrm3& Rt,
+			const vctFixedSizeVector<unsigned char,3>& rgb,
+			float size ):
 
   onoff( SWITCH_ON ){
 
@@ -228,7 +314,8 @@ void osaOSGBody::AddTransformCallback() {
 }
 
 void osaOSGBody::ReadModel( const std::string& model,
-			      const std::string& options ){
+			    const std::string& options,
+			    double alpha ){
 
   osg::ref_ptr< osgDB::ReaderWriter::Options > osgoptions;
   osgoptions = new osgDB::ReaderWriter::Options( options );
@@ -248,6 +335,9 @@ void osaOSGBody::ReadModel( const std::string& model,
   osg::ref_ptr<osg::Node> node = osgDB::readNodeFile( model, osgoptions );
 
   if( node != NULL ){
+    osaOSGBody::TransparencyVisitor tv; 
+    tv.alpha = alpha;
+    node->accept( tv ); 
     // Add the node to the transformation node
     osgscale->addChild( node );
   }

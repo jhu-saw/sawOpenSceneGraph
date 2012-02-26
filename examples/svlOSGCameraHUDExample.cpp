@@ -47,7 +47,7 @@ public:
     vctAxisAngleRotation3<double> Rwh( u, theta );
     vctFrm3 Rtwh;
     Rtwh.Rotation().FromRaw( Rwh );
-    Rtwh.Translation().Assign( vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
+   Rtwh.Translation().Assign( vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
 
     Rt.Position() = Rtwh;
     theta += 0.001;
@@ -76,14 +76,26 @@ int main(){
   osg::Node::NodeMask maskleft  = 0x01;
   osg::Node::NodeMask maskright = 0x02;
 
+  vctFixedSizeMatrix<double,3,3> Kl( 526.0554,      0.0, 313.2596,
+				          0.0, 525.0756, 233.6962,
+				          0.0,      0.0,   1.0 );
+  vctFixedSizeMatrix<double,3,3> Kr( 534.6877,      0.0, 327.7359,
+				          0.0, 533.5979, 249.4243,
+				          0.0,      0.0,   1.0 );
+  vctMatrixRotation3<double> Rlr( 0.9887, -0.0126, -0.1497,
+				  0.0085,  0.9996, -0.0277,
+				  0.1500,  0.0261,  0.9883,
+				  VCT_NORMALIZE );
+  vctFixedSizeVector<double,3> tlr( -0.0410, 0.0000, -0.0042 );
+  vctFrame4x4<double> Rtlr( Rlr, tlr );
   mtsOSGStereo* camera;
   camera = new mtsOSGStereo( "camera",
 			     world,
 			     x, y, 
 			     width, height,
-			     55.0, ((double)width)/((double)height),
+			     Kl, Kr, Rtlr,
 			     Znear, Zfar, 
-			     0.1 );
+			     true );
   camera->setCullMask( maskleft, osaOSGStereo::LEFT );
   camera->setCullMask( maskright, osaOSGStereo::RIGHT );
   taskManager->AddComponent( camera );
@@ -102,17 +114,13 @@ int main(){
   vctFrame4x4<double> Rt(  vctMatrixRotation3<double>(),
 			   vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
 
-  osg::ref_ptr< osaOSGBody > background;
-  background = new osaOSGBody( path+"background.3ds", world, 
-  			       vctFrame4x4<double>() );
-  
   osg::ref_ptr< mtsOSGBody > hubble;
-  hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt );
+  hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt, 0.1, 0.6);
   taskManager->AddComponent( hubble.get() );
 
   // connect the motion to hubble
   taskManager->Connect( hubble->GetName(), "Input",
-			hmotion.GetName(), "Output" );
+  			hmotion.GetName(), "Output" );
 
   // start the components
   taskManager->CreateAll();
@@ -121,42 +129,91 @@ int main(){
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
+  cmnGetChar();
+
   // Start the svl stuff
   svlInitialize();
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  svlFilterSourceVideoFile sourceleft(1);
-  //svlFilterSourceVideoCapture sourceleft(1);
+  svlFilterSourceVideoCapture sourceleft(1);
+  svlFilterImageFlipRotate flipleft;
+  svlFilterImageRectifier  rectifierleft;
   svlOSGImage imageleft( 0, 0, width, height, hudleft );
-  svlFilterImageWindow windowleft;
 
-  sourceleft.SetFilePath("xray.avi");
-  //sourceleft.DialogSetup();
+  sourceleft.DialogSetup();
+  flipleft.SetVerticalFlip( true );
+  {
+    vct3x3 R( 1.0, 0.0, 0.0,
+	      0.0, 1.0, 0.0,
+	      0.0, 0.0, 1.0 );
+    vct2 f( 526.0554,  525.0756 );
+    vct2 c( 313.2596,  233.6962 );
+    vctFixedSizeVector<double,7> k(    -0.3438,
+				       0.1027,
+				       0.0013,
+				       0.0002,
+				       0.0,
+				       0.0,
+				       0.0 );
+    double alpha = 0.0;
+    rectifierleft.SetTableFromCameraCalibration( 480, 640,
+						 R,
+						 f,
+						 c,
+						 k,
+						 alpha,
+						 0 );
+  }
   imageleft.setNodeMask( maskleft );
-
+    
   streamleft.SetSourceFilter( &sourceleft );
-  //sourceleft.GetOutput()->Connect( windowleft.GetInput() );
-  sourceleft.GetOutput()->Connect( imageleft.GetInput() );
+  sourceleft.GetOutput()->Connect( flipleft.GetInput() );
+  flipleft.GetOutput()->Connect( rectifierleft.GetInput() );
+  rectifierleft.GetOutput()->Connect( imageleft.GetInput() );
   
   svlStreamManager streamright; 
-  svlFilterSourceVideoFile sourceright(1);
-  //svlFilterSourceVideoCapture sourceright(1); 
+  svlFilterSourceVideoCapture sourceright(1); 
+  svlFilterImageFlipRotate flipright;
+  svlFilterImageRectifier  rectifierright;
   svlOSGImage imageright( 0, 0, width, height, hudright );
-  svlFilterImageWindow windowright;
 
-  sourceright.SetFilePath("traffic.avi");
-  //sourceright.DialogSetup();
+  sourceright.DialogSetup();
+  flipright.SetVerticalFlip( true );
+  {
+    vct3x3 R( 1.0, 0.0, 0.0,
+	      0.0, 1.0, 0.0,
+	      0.0, 0.0, 1.0 );
+    vct2 f( 534.6877,  533.5979 );
+    vct2 c( 327.7359,  249.4243 );
+    vctFixedSizeVector<double,7> k(-0.3618,
+				    0.1450,
+				    0.0013,
+				    0.0002,
+				    0.0,
+				    0.0,
+				    0.0 );
+    double alpha = 0.0;
+    rectifierright.SetTableFromCameraCalibration( 480, 640,
+						  R,
+						  f,
+						  c,
+						  k,
+						  alpha,
+						  0 );
+  }
+
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );
-  //sourceright.GetOutput()->Connect( windowright.GetInput() );
-  sourceright.GetOutput()->Connect( imageright.GetInput() );
+  sourceright.GetOutput()->Connect( flipright.GetInput() );
+  flipright.GetOutput()->Connect( rectifierright.GetInput() );
+  rectifierright.GetOutput()->Connect( imageright.GetInput() );
   
   if( streamleft.Play() != SVL_OK )
     { std::cerr << "Cannot start left stream." <<std::endl; }
 
-  if( streamright.Play() != SVL_OK ) std::cout <<"error"<<std::endl;
+  if( streamright.Play() != SVL_OK )
     { std::cerr << "Cannot start right stream." <<std::endl; }
 
   std::cout << "ENTER to exit." << std::endl;

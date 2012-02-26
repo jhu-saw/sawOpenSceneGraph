@@ -54,6 +54,16 @@ class CISST_EXPORT osaOSGStereo : public osaOSGCamera {
 		double baseline,
 		bool trackball = true,
 		const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>() );
+
+  osaOSGStereo( osaOSGWorld* world,
+		int x, int y, int width, int height,
+		const vctFixedSizeMatrix<double,3,3>& Kl,
+		const vctFixedSizeMatrix<double,3,3>& Kr,
+		const vctFrame4x4<double>& vctRt,
+		double zNear, double zFar,
+		bool trackball,
+		const vctFrame4x4<double>& Rtoffset );
+
   ~osaOSGStereo( );
 
   void setCullMask( osg::Node::NodeMask mask, osaOSGStereo::Camera idx ){ 

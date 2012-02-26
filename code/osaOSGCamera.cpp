@@ -392,7 +392,7 @@ void osaOSGCamera::UpdateTransform()
     osg::Matrixd mat = getCameraManipulator()->getMatrix();
     for( int r=0; r<4; r++ ){
       for( int c=0; c<4; c++ ){
-	std::cout << mat(r,c) <<" ";
+      std::cout << std::setw(15) << mat(r,c) <<" ";
       }
       std::cout << std::endl;
     }

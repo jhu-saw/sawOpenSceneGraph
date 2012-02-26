@@ -39,6 +39,15 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
 
  protected:
 
+
+  class TransparencyVisitor : public osg::NodeVisitor {
+  public:
+    double alpha;
+    TransparencyVisitor();
+    virtual void apply( osg::Geode& geode );
+  };  // TransparencyVisitor
+
+
   // This class is used to extract the triangle mesh out of the OSG
   // classes/structures. It is a geode visitor that traverse the drawable 
   // objects and extract all the triangles from all the drawables
@@ -75,6 +84,7 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
 
     // This method is called for each geode. It scans all the drawable of the 
     // geode and extract/copy the triangles to the triangle vector
+    //virtual void apply( osg::Geode& geode );
     virtual void apply( osg::Geode& geode );
     
   };  // GeodeVisitor
@@ -94,6 +104,7 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
 
   // A scaling factor
   osg::ref_ptr<osg::PositionAttitudeTransform> osgscale;
+
 
   // This is used to update the position of the body
   class TransformCallback : public osg::NodeCallback {    
@@ -137,7 +148,8 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
 
   // I/O
   void ReadModel( const std::string& fname,
-		  const std::string& options );
+		  const std::string& options,
+		  double alpha );
 
   void Read3DData( const vctDynamicMatrix<double>& pc,
 		   const vctFixedSizeVector<unsigned char,3>& RGB = RGBDEFAULT,
@@ -159,24 +171,14 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
      a function name is passed.
      \param model The file name of a 3D model
      \param Rt The initial transformation of the body
+     \param scale The size scale
+     \param alpha The alpha parameter
+     \param option File options
   */
   osaOSGBody( const std::string& model,
-		const vctFrame4x4<double>& Rt,
-		double scale = 1.0,
-		const std::string& option = std::string("") );
-
-  //! OSG Body constructor
-  /**
-     Create a OSG body component. The body will add a required interface *if*
-     a function name is passed.
-     \param model The file name of a 3D model
-     \param world The OSG world the body belongs to
-     \param Rt The initial transformation of the body
-  */
-  osaOSGBody( const std::string& model,
-	      osaOSGWorld* world,
 	      const vctFrame4x4<double>& Rt,
 	      double scale = 1.0,
+	      double alpha = 1.0,
 	      const std::string& option = std::string("") );
 
   //! OSG Body constructor
@@ -186,20 +188,61 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
      \param model The file name of a 3D model
      \param world The OSG world the body belongs to
      \param Rt The initial transformation of the body
+     \param scale The size scale
+     \param alpha The alpha parameter
+     \param option File options
   */
   osaOSGBody( const std::string& model,
-		osaOSGWorld* world,
-		const vctFrm3& Rt,
-		double scale = 1.0,
-		const std::string& option = std::string("") );
+	      osaOSGWorld* world,
+	      const vctFrame4x4<double>& Rt,
+	      double scale = 1.0,
+	      double alpha = 1.0,
+	      const std::string& option = std::string("") );
+
+
+  //! OSG Body constructor
+  /**
+     Create a OSG body component. The body will add a required interface *if*
+     a function name is passed.
+     \param model The file name of a 3D model
+     \param body The OSG body the body is attached to
+     \param Rt The initial transformation of the body wrt to body
+     \param scale The size scale
+     \param alpha The alpha parameter
+     \param option File options
+  */
+  osaOSGBody( const std::string& model,
+	      osaOSGBody* world,
+	      const vctFrame4x4<double>& Rt,
+	      double scale = 1.0,
+	      double alpha = 1.0,
+	      const std::string& option = std::string("") );
+
+  //! OSG Body constructor
+  /**
+     Create a OSG body component. The body will add a required interface *if*
+     a function name is passed.
+     \param model The file name of a 3D model
+     \param world The OSG world the body belongs to
+     \param Rt The initial transformation of the body
+     \param scale The size scale
+     \param alpha The alpha parameter
+     \param option File options
+  */
+  osaOSGBody( const std::string& model,
+	      osaOSGWorld* world,
+	      const vctFrm3& Rt,
+	      double scale = 1.0,
+	      double alpha = 1.0,
+	      const std::string& option = std::string("") );
 
 
   //! Construcor for 3D point cloud
   osaOSGBody( const vctDynamicMatrix<double>& pointcloud,
-		osaOSGWorld* world,
-	        const vctFrm3& Rt,
-		const vctFixedSizeVector<unsigned char,3>& rgb=RGBDEFAULT,
-		float size = 3.0 );
+	      osaOSGWorld* world,
+	      const vctFrm3& Rt,
+	      const vctFixedSizeVector<unsigned char,3>& rgb=RGBDEFAULT,
+	      float size = 3.0 );
 
   osaOSGBody();
 

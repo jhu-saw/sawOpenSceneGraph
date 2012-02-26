@@ -18,10 +18,10 @@ int main( int, char** argv ){
   double Znear = 0.1, Zfar = 10.0;
   osg::ref_ptr< osaOSGMono > camera;
   camera = new osaOSGMono( world,
-			     x, y, width, height,
-			     55.0, ((double)width)/((double)height),
-			     Znear, Zfar,
-			     false );
+			   x, y, width, height,
+			   55.0, ((double)width)/((double)height),
+			   Znear, Zfar,
+			   false );
   camera->Initialize();
   
   // Create the objects
@@ -35,7 +35,7 @@ int main( int, char** argv ){
 
   osg::ref_ptr< osaOSGBody > background;
   background = new osaOSGBody( path+"background.3ds", world, 
-  				 vctFrame4x4<double>() );
+			       vctFrame4x4<double>() );
   
   std::cout << "ESC to quit" << std::endl;
 
