@@ -16,18 +16,18 @@ class CameraMotion : public mtsTaskPeriodic {
 private:
 
   // The position that the camera will be fetching
-  prmPositionCartesianGet Rt;
+  prmPositionCartesianGet prmRt;
 
 public:
 
   CameraMotion() : mtsTaskPeriodic( "CameraMotion", 0.01, true ){
-    Rt.Position().Translation()[2] = 1;
+    prmRt.Position().Translation()[2] = 1;
 
-    StateTable.AddData( Rt, "PositionOrientation" );
+    StateTable.AddData( prmRt, "PositionOrientation" );
 
     // provide the camera position
     mtsInterfaceProvided* output = AddInterfaceProvided( "Output" );
-    output->AddCommandReadState( StateTable, Rt, "GetPositionCartesian" );
+    output->AddCommandReadState( StateTable, prmRt, "GetPositionCartesian" );
 
   }
 
@@ -35,7 +35,8 @@ public:
   void Startup(){}
   void Run(){
     ProcessQueuedCommands();
-    Rt.Position().Translation()[2] += 0.001;
+    prmRt.Position().Translation()[2] += 0.001;
+    prmRt.SetValid( true );
   }
 
   void Cleanup(){}
@@ -48,21 +49,20 @@ class HubbleMotion : public mtsTaskPeriodic {
 private:
 
   // The position that the camera will be fetching
-  prmPositionCartesianGet Rt;
-
+  prmPositionCartesianGet prmRt;
   double theta;
 
 public:
 
   HubbleMotion() : mtsTaskPeriodic( "HubbleMotion", 0.01, true ){
     theta = 0;
-    Rt.Position().Translation()[2] = 0.5;
+    prmRt.Position().Translation()[2] = 0.5;
 
-    StateTable.AddData( Rt, "PositionOrientation" );
+    StateTable.AddData( prmRt, "PositionOrientation" );
 
     // provide the camera position
     mtsInterfaceProvided* output = AddInterfaceProvided( "Output" );
-    output->AddCommandReadState( StateTable, Rt, "GetPositionCartesian" );
+    output->AddCommandReadState( StateTable, prmRt, "GetPositionCartesian" );
 
   }
 
@@ -78,7 +78,8 @@ public:
     Rtwh.Rotation().FromRaw( Rwh );
     Rtwh.Translation().Assign( vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
 
-    Rt.Position() = Rtwh;
+    prmRt.Position() = Rtwh;
+    prmRt.SetValid( true );
     theta += 0.001;
     
   }
@@ -131,7 +132,7 @@ int main(){
   osg::ref_ptr< osaOSGBody > background;
   background = new osaOSGBody( path+"background.3ds", world, 
 			       vctFrame4x4<double>() );
-  
+
   taskManager->Connect( camera->GetName(), "Input",
   			cmotion.GetName(), "Output" );
 

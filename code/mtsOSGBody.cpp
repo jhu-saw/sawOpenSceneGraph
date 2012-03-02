@@ -50,8 +50,11 @@ void mtsOSGBody::UpdateTransform(){
     prmPositionCartesianGet Rt;
     GetPosition( Rt );
 
+    bool valid = false;
+    Rt.GetValid( valid );
+
     // Set the transformation
-    osaOSGBody::SetTransform( Rt.Position() );
+    if( valid ){ osaOSGBody::SetTransform( Rt.Position() ); }
     
   }
 

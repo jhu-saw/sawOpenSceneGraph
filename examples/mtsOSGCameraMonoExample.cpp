@@ -79,6 +79,7 @@ public:
     Rtwh.Translation().Assign( vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
 
     Rt.Position() = Rtwh;
+    Rt.SetValid( true );
     theta += 0.001;
 
   }
