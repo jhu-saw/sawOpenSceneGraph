@@ -38,8 +38,8 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
   if( inputtype == mtsOSGManipulatorTask::PROVIDE_INPUT ){
     inputp = AddInterfaceProvided( "Input" );
     if( inputp ){
-      StateTable.AddData( qin, "PositionJointInput" );
-      inputp->AddCommandWriteState( StateTable, qin, "SetPositionJoint" );
+      StateTable.AddData( prmqin, "PositionJointInput" );
+      inputp->AddCommandWriteState( StateTable, prmqin, "SetPositionJoint" );
     }
     else{
       CMN_LOG_RUN_ERROR << "Failed to create interface Input for " << GetName()
@@ -60,10 +60,10 @@ mtsOSGManipulatorTask::mtsOSGManipulatorTask( const std::string& name,
   output = AddInterfaceProvided( "Output" );
   if( output ){
     
-    StateTable.AddData( qout,  "PositionJointOutput" );
-    StateTable.AddData( Rtout, "PositionCartesianOutput" );
-    output->AddCommandReadState( StateTable, Rtout, "GetPositionCartesian" );
-    output->AddCommandReadState( StateTable, qout,  "GetPositionJoint" );
+    StateTable.AddData( prmqout,  "PositionJointOutput" );
+    StateTable.AddData( prmRtout, "PositionCartesianOutput" );
+    output->AddCommandReadState( StateTable, prmRtout, "GetPositionCartesian" );
+    output->AddCommandReadState( StateTable, prmqout,  "GetPositionJoint" );
     
   }
   else{
@@ -79,28 +79,33 @@ void mtsOSGManipulatorTask::Run(){
 
   if( manipulator.get() != NULL ){
 
-    vctDynamicVector<double> qinput;
-    if( inputtype == PROVIDE_INPUT )
-      { qinput = qin.Goal(); }
+    vctDynamicVector<double> vctq( prmqout.Position() );
+    if( inputtype == PROVIDE_INPUT ){
+      bool valid=false;
+      prmqin.GetValid( valid );
+      if( valid ) { vctq = prmqin.Goal(); }
+    }
     else{ 
       prmPositionJointGet prmqinput;
       GetPositionJoint( prmqinput );
-      prmqinput.GetPosition( qinput );
+      bool valid=false;
+      prmqinput.GetValid( valid );
+      if( valid ) { prmqinput.GetPosition( vctq ); }
     }
 
-    if( manipulator->SetPositions( qinput ) !=
+    if( manipulator->SetPositions( vctq ) !=
 	osaOSGManipulator::ESUCCESS ){
       CMN_LOG_RUN_ERROR << "Failed to get position for " << GetName()
 			<< std::endl;
     }
 
-    if( manipulator->GetPositions( qout.Position()) !=
+    if( manipulator->GetPositions( prmqout.Position()) !=
 	osaOSGManipulator::ESUCCESS ){
       CMN_LOG_RUN_ERROR << "Failed to get position for " << GetName()
 			<< std::endl;
     }
 
-    Rtout.Position().FromRaw( manipulator->ForwardKinematics( qinput ) );
+    prmRtout.Position().FromRaw( manipulator->ForwardKinematics( vctq ) );
 
   }
 

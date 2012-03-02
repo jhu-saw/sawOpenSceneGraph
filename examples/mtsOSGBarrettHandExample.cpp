@@ -13,14 +13,14 @@ private:
   mtsFunctionRead  GetPositions;
   mtsFunctionWrite SetPositions;
 
-  vctDynamicVector<double> q;
+  vctDynamicVector<double> vctq;
 
 public:
 
   BHMotion() : mtsTaskPeriodic( "BHMotion", 0.01, true ){
 
-    q.SetSize(4);
-    q.SetAll(0.0);
+    vctq.SetSize(4);
+    vctq.SetAll(0.0);
 
     mtsInterfaceRequired* input = AddInterfaceRequired( "Input" );
     mtsInterfaceRequired* output = AddInterfaceRequired( "Output" );
@@ -35,15 +35,16 @@ public:
   void Run(){
     ProcessQueuedCommands();
     
-    prmPositionJointGet qin;
-    GetPositions( qin );
+    prmPositionJointGet prmqin;
+    GetPositions( prmqin );
     
-    prmPositionJointSet qout;
-    qout.SetSize( 4 );
-    qout.Goal() = q;
-    SetPositions( qout );
+    prmPositionJointSet prmqout;
+    prmqout.SetSize( 4 );
+    prmqout.Goal() = vctq;
+    prmqout.SetValid( true );
+    SetPositions( prmqout );
     
-    for( size_t i=0; i<q.size(); i++ ) q[i] += 0.001;
+    for( size_t i=0; i<vctq.size(); i++ ) vctq[i] += 0.001;
 
   }
   

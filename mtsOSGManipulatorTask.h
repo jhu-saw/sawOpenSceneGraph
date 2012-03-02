@@ -40,9 +40,9 @@ class CISST_EXPORT mtsOSGManipulatorTask : public mtsTaskPeriodic {
 
   osg::ref_ptr<osaOSGManipulator> manipulator;
 
-  prmPositionCartesianGet Rtout;
-  prmPositionJointGet qout;
-  prmPositionJointSet qin;
+  prmPositionCartesianGet prmRtout;
+  prmPositionJointGet prmqout;
+  prmPositionJointSet prmqin;
 
   mtsOSGManipulatorTask::InputType inputtype;
   mtsFunctionRead GetPositionJoint;
