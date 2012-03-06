@@ -1,3 +1,4 @@
+#include <cisstCommon/cmnPath.h>
 #include <cisstMultiTask/mtsTaskManager.h>
 #include <cisstMultiTask/mtsTaskPeriodic.h>
 #include <cisstMultiTask/mtsInterfaceRequired.h>
@@ -9,7 +10,7 @@
 class BHMotion : public mtsTaskPeriodic {
 
 private:
-  
+
   mtsFunctionRead  GetPositions;
   mtsFunctionWrite SetPositions;
 
@@ -34,20 +35,20 @@ public:
   void Startup(){}
   void Run(){
     ProcessQueuedCommands();
-    
+
     prmPositionJointGet prmqin;
     GetPositions( prmqin );
-    
+
     prmPositionJointSet prmqout;
     prmqout.SetSize( 4 );
     prmqout.Goal() = vctq;
     prmqout.SetValid( true );
     SetPositions( prmqout );
-    
+
     for( size_t i=0; i<vctq.size(); i++ ) vctq[i] += 0.001;
 
   }
-  
+
   void Cleanup(){}
 
 };
@@ -61,7 +62,7 @@ int main(){
   cmnLogger::SetMaskDefaultLog( CMN_LOG_ALLOW_ALL );
 
   osg::ref_ptr< osaOSGWorld > world = new osaOSGWorld;
-  
+
   // Create a camera
   int x = 0, y = 0;
   int width = 320, height = 240;
@@ -73,25 +74,25 @@ int main(){
 			     Znear, Zfar );
   camera->Initialize();
 
-  
-  std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/BH/" );
+  cmnPath path;
+  path.AddRelativeToCisstShare("cisstRobot/BH");
   vctFrame4x4<double> Rtw0;
-  
+
   mtsOSGBH* BH;
   BH = new mtsOSGBH( "BH",
 		     0.01,
 		     OSA_CPU1,
 		     20,
-		     path + "l0.obj",
-		     path + "l1.obj",
-		     path + "l2.obj",
-		     path + "l3.obj",
+		     path.Find("l0.obj"),
+		     path.Find("l1.obj"),
+		     path.Find("l2.obj"),
+		     path.Find("l3.obj"),
 		     world,
 		     Rtw0,
-		     path + "f1f2.rob",
-		     path + "f3.rob" );
+		     path.Find("f1f2.rob"),
+		     path.Find("f3.rob") );
   taskManager->AddComponent( BH );
-  
+
   BHMotion motion;
   taskManager->AddComponent( &motion );
 

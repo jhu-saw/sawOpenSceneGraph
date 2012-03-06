@@ -1,3 +1,4 @@
+#include <cisstCommon/cmnPath.h>
 #include <cisstCommon/cmnGetChar.h>
 
 #include <cisstMultiTask/mtsTaskPeriodic.h>
@@ -16,11 +17,14 @@ private:
 
   mtsUCharMat mtsimg;  // Mx(Nx3)
   int i;               // image counter
+  cmnPath path;
 
 public:
 
   ImageServer( const std::string& name ) :
     mtsTaskPeriodic( name, 1.0/30.0, true ){
+
+    path.AddRelativeToCisstShare("/images/left");
 
     mtsInterfaceProvided* output = AddInterfaceProvided( "Output" );
     StateTable.AddData( mtsimg, "Image" );
@@ -37,10 +41,10 @@ public:
     ProcessQueuedCommands();
 
     // load the osg image
-    char filename[128];
-    sprintf( filename, "walkstraight/frame%04d.tif", i++ );
+    char buffer[128];
+    sprintf( buffer, "left%07d.jpg", i++ );
     osg::ref_ptr<osg::Image> osgimg;
-    osgimg = osgDB::readImageFile( std::string( filename ) );
+    osgimg = osgDB::readImageFile( path.Find( buffer ) );
 
     // copy the osg image to mtsMatrix
     mtsimg.SetSize( osgimg->t(), osgimg->s()*3 );
@@ -50,7 +54,7 @@ public:
     bool valid = true;
     mtsimg.SetValid( valid );
 
-    if( i == 125 ) i=0;
+    if( i == 49 ) i=0;
 
   }
   

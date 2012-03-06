@@ -1,3 +1,4 @@
+#include <cisstCommon/cmnPath.h>
 #include <sawOpenSceneGraph/osaOSGWorld.h>
 #include <sawOpenSceneGraph/osaOSGMono.h>
 #include <sawOpenSceneGraph/osaOSGBody.h>
@@ -11,7 +12,7 @@ int main( int, char** argv ){
   cmnLogger::SetMaskDefaultLog( CMN_LOG_ALLOW_ALL );
 
   osg::ref_ptr< osaOSGWorld > world = new osaOSGWorld;
-  
+
   // Create a camera
   int x = 0, y = 0;
   int width = 320, height = 240;
@@ -23,20 +24,22 @@ int main( int, char** argv ){
 			   Znear, Zfar,
 			   false );
   camera->Initialize();
-  
-  // Create the objects
-  std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
 
-  vctFrame4x4<double> Rt(  vctMatrixRotation3<double>(),
-			   vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
+  // Create the objects
+  cmnPath path;
+  path.AddRelativeToCisstShare("/models");
+  path.AddRelativeToCisstShare("/models/hubble");
+
+  vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
+			  vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
 
   osg::ref_ptr< osaOSGBody > hubble;
-  hubble = new osaOSGBody( path+"hst.3ds", world, Rt );
+  hubble = new osaOSGBody( path.Find("hst.3ds"), world, Rt );
 
   osg::ref_ptr< osaOSGBody > background;
-  background = new osaOSGBody( path+"background.3ds", world, 
+  background = new osaOSGBody( path.Find("background.3ds"), world,
 			       vctFrame4x4<double>() );
-  
+
   std::cout << "ESC to quit" << std::endl;
 
   // animate and render
@@ -53,8 +56,8 @@ int main( int, char** argv ){
     // rotate hubble
     vctFixedSizeVector<double,3> u( 0.0, 0.0, 1.0 );
     vctAxisAngleRotation3<double> Rwh( u, theta );
-    vctFrame4x4<double> Rtwh(  Rwh,
-			       vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
+    vctFrame4x4<double> Rtwh( Rwh,
+			      vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
     hubble->SetTransform( Rtwh );
 
     // zoom out the camera

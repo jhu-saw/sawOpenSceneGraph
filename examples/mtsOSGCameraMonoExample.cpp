@@ -1,4 +1,5 @@
 #include <cisstCommon/cmnGetChar.h>
+#include <cisstCommon/cmnPath.h>
 
 #include <cisstMultiTask/mtsTaskManager.h>
 #include <cisstMultiTask/mtsTaskPeriodic.h>
@@ -37,7 +38,7 @@ public:
     ProcessQueuedCommands();
     Rt.Position().Translation()[2] += 0.01;
   }
-  
+
   void Cleanup(){}
 
 };
@@ -70,7 +71,7 @@ public:
   void Startup(){}
   void Run(){
     ProcessQueuedCommands();
-    
+
     // rotate hubble
     vctFixedSizeVector<double,3> u( 0.0, 0.0, 1.0 );
     vctAxisAngleRotation3<double> Rwh( u, theta );
@@ -83,7 +84,7 @@ public:
     theta += 0.001;
 
   }
-  
+
   void Cleanup(){}
 
 };
@@ -97,15 +98,15 @@ int main(){
   cmnLogger::SetMaskDefaultLog( CMN_LOG_ALLOW_ALL );
 
   osg::ref_ptr< osaOSGWorld > world = new osaOSGWorld;
-  
+
   // Create a camera
   int x = 0, y = 0;
   int width = 320, height = 240;
   double Znear = 0.1, Zfar = 10.0;
   mtsOSGMono* camera;
-  camera = new mtsOSGMono( "camera", 
+  camera = new mtsOSGMono( "camera",
 			   world,
-			   x, y, 
+			   x, y,
 			   width, height,
 			   55.0, ((double)width)/((double)height),
 			   Znear, Zfar,
@@ -120,16 +121,18 @@ int main(){
   HubbleMotion hmotion;
   taskManager->AddComponent( &hmotion );
 
-  std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
+  cmnPath path;
+  path.AddRelativeToCisstShare("/models");
+  path.AddRelativeToCisstShare("/models/hubble");
 
   vctFrame4x4<double> Rt(  vctMatrixRotation3<double>(),
 			   vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
   osg::ref_ptr< mtsOSGBody > hubble;
-  hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt, 0.8 );
+  hubble = new mtsOSGBody( "hubble", path.Find("hst.3ds"), world, Rt, 0.8 );
   taskManager->AddComponent( hubble.get() );
 
   osg::ref_ptr< osaOSGBody > background;
-  background = new osaOSGBody( path+"background.3ds", world, 
+  background = new osaOSGBody( path.Find("background.3ds"), world,
 			       vctFrame4x4<double>() );
 
   taskManager->Connect( camera->GetName(), "Input",
@@ -140,7 +143,7 @@ int main(){
 
   taskManager->CreateAll();
   taskManager->WaitForStateAll( mtsComponentState::READY );
-  
+
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 

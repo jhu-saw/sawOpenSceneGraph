@@ -1,3 +1,4 @@
+#include <cisstCommon/cmnPath.h>
 #include <cisstOSAbstraction/osaSleep.h>
 #include <sawOpenSceneGraph/osaOSGWorld.h>
 #include <sawOpenSceneGraph/osaOSGMono.h>
@@ -27,19 +28,23 @@ int main( ){
   osg::ref_ptr< osaOSGImage > image;
   image = new osaOSGImage( -.5, -.5, 1, 1, world, vctFrame4x4<double>() );
 
-  int i=0;
-  while( i < 125 ){
+  cmnPath path;
+  path.AddRelativeToCisstShare("/images/left");
 
-    char buffer[128];
-    sprintf( buffer, "walkstraight/frame%04d.tif", i++ );
-
-    image->SetImage( std::string( buffer ) );
-    camera->frame();
-
-    osaSleep( 1.0/30.0 );
-
+  while( !camera->done() ){
+    int i=0;
+    while( i < 49 && !camera->done() ){
+      
+      char buffer[128];
+      sprintf( buffer, "left%07d.jpg", i++ );
+      
+      image->SetImage( path.Find( buffer ) );
+      camera->frame();
+      
+      osaSleep( 1.0/30.0 );
+      
+    }
   }
-
 
   return 0;
 

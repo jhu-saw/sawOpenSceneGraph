@@ -1,3 +1,4 @@
+#include <cisstCommon/cmnPath.h>
 #include <sawOpenSceneGraph/osaOSGBody.h>
 #include <sawOpenSceneGraph/osaOSGPick.h>
 #include <sawOpenSceneGraph/osaOSGMono.h>
@@ -35,18 +36,20 @@ int main(){
   camera->addEventHandler( new MyPick() );
 
   // Create objects
-  std::string data( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
+  cmnPath path;
+  path.AddRelativeToCisstShare("/models");
+  path.AddRelativeToCisstShare("/models/hubble");
   vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
 			  vctFixedSizeVector<double,3>(0.0, 0.0, 0.5) );
 
 
   vctFrame4x4<double> eye;
   osg::ref_ptr<osaOSGBody> background;
-  background = new osaOSGBody( data+"background.3ds", world, eye );
+  background = new osaOSGBody( path.Find("background.3ds"), world, eye );
   background->setName( "background" );
 
   osg::ref_ptr<osaOSGBody> hubble;
-  hubble = new osaOSGBody( data+"hst.3ds", world, Rt );
+  hubble = new osaOSGBody( path.Find("hst.3ds"), world, Rt );
   hubble->setName( "hubble" );
 
   while( !camera->done() )

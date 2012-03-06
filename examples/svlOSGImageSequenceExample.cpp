@@ -1,4 +1,5 @@
 #include <cisstCommon/cmnGetChar.h>
+#include <cisstCommon/cmnPath.h>
 
 #include <cisstMultiTask/mtsTaskPeriodic.h>
 #include <cisstMultiTask/mtsInterfaceProvided.h>
@@ -13,7 +14,7 @@
 
 #include <cisstStereoVision.h>
 
-// Hubble motion 
+// Hubble motion
 class HubbleMotion : public mtsTaskPeriodic {
 
 private:
@@ -40,7 +41,7 @@ public:
   void Startup(){}
   void Run(){
     ProcessQueuedCommands();
-    
+
     // rotate hubble
     vctFixedSizeVector<double,3> u( 0.0, 0.0, 1.0 );
     vctAxisAngleRotation3<double> Rwh( u, theta );
@@ -52,7 +53,7 @@ public:
     theta += 0.001;
 
   }
-  
+
   void Cleanup(){}
 
 };
@@ -67,7 +68,7 @@ int main( ){
 
   // Create the OSG world
   osg::ref_ptr< osaOSGWorld > world = new osaOSGWorld;
-  
+
   // Create OSG camera
   int x = 0, y = 0;
   int width = 640, height = 480;
@@ -79,10 +80,10 @@ int main( ){
   mtsOSGStereo* camera;
   camera = new mtsOSGStereo( "camera",
 			     world,
-			     x, y, 
+			     x, y,
 			     width, height,
 			     55.0, ((double)width)/((double)height),
-			     Znear, Zfar, 
+			     Znear, Zfar,
 			     0.1 );
   camera->setCullMask( maskleft, osaOSGStereo::LEFT );
   camera->setCullMask( maskright, osaOSGStereo::RIGHT );
@@ -94,14 +95,15 @@ int main( ){
 
 
   // create hubble
-  std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
+  cmnPath path;
+  path.AddRelativeToCisstShare("/models/hubble");
 
-  vctFrame4x4<double> Rt(  vctMatrixRotation3<double>(),
-			   vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
+  vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
+			  vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
   osg::ref_ptr< mtsOSGBody > hubble;
-  hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt );
+  hubble = new mtsOSGBody( "hubble", path.Find("hst.3ds"), world, Rt );
   taskManager->AddComponent( hubble.get() );
-  
+
 
   // connect the motion to hubble
   taskManager->Connect( hubble->GetName(), "Input",
@@ -132,9 +134,9 @@ int main( ){
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
 
-  svlStreamManager streamright; 
+  svlStreamManager streamright;
   //svlFilterSourceVideoFile sourceright(1);
-  svlFilterSourceVideoCapture sourceright(1); 
+  svlFilterSourceVideoCapture sourceright(1);
   svlOSGImage imageright( -0.5, -0.5, 1, 1, world );
 
   //sourceright.SetFilePath("traffic.avi");

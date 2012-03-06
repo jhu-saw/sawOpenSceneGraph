@@ -1,4 +1,5 @@
 #include <cisstCommon/cmnGetChar.h>
+#include <cisstCommon/cmnPath.h>
 
 #include <cisstMultiTask/mtsTaskManager.h>
 #include <cisstMultiTask/mtsTaskPeriodic.h>
@@ -11,7 +12,7 @@
 class WAMMotion : public mtsTaskPeriodic {
 
 private:
-  
+
   mtsFunctionRead  GetPositions;
   mtsFunctionWrite SetPositions;
 
@@ -36,20 +37,20 @@ public:
   void Startup(){}
   void Run(){
     ProcessQueuedCommands();
-    
+
     prmPositionJointGet prmqin;
     GetPositions( prmqin );
-    
+
     prmPositionJointSet prmqout;
     prmqout.SetSize( 7 );
     prmqout.Goal() = vctq;
     prmqout.SetValid( true );
     SetPositions( prmqout );
-    
+
     for( size_t i=0; i<vctq.size(); i++ ) vctq[i] += 0.001;
 
   }
-  
+
   void Cleanup(){}
 
 };
@@ -63,7 +64,7 @@ int main(){
   cmnLogger::SetMaskDefaultLog( CMN_LOG_ALLOW_ALL );
 
   osg::ref_ptr< osaOSGWorld > world = new osaOSGWorld;
-  
+
   // Create a camera
   int x = 0, y = 0;
   int width = 640, height = 480;
@@ -90,20 +91,21 @@ int main(){
 			      Znear, Zfar, false, Rt7cam );
   WAMcamera->Configure();
   taskManager->AddComponent( WAMcamera );
-  
 
 
-  std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/WAM/" );
+
+  cmnPath path;
+  path.AddRelativeToCisstShare("/models/WAM");
   vctFrame4x4<double> Rtw0;
-  
+
   std::vector< std::string > models;
-  models.push_back( path + "l1.obj" );
-  models.push_back( path + "l2.obj" );
-  models.push_back( path + "l3.obj" );
-  models.push_back( path + "l4.obj" );
-  models.push_back( path + "l5.obj" );
-  models.push_back( path + "l6.obj" );
-  models.push_back( path + "l7.obj" );
+  models.push_back( path.Find("l1.obj") );
+  models.push_back( path.Find("l2.obj") );
+  models.push_back( path.Find("l3.obj") );
+  models.push_back( path.Find("l4.obj") );
+  models.push_back( path.Find("l5.obj") );
+  models.push_back( path.Find("l6.obj") );
+  models.push_back( path.Find("l7.obj") );
 
   mtsOSGManipulator* WAM;
   WAM = new mtsOSGManipulator( "WAM",
@@ -113,16 +115,16 @@ int main(){
 			       models,
 			       world,
 			       Rtw0,
-			       path + "wam7.rob",
-			       path + "l0.obj" );
+			       path.Find("wam7.rob"),
+			       path.Find("l0.obj") );
   taskManager->AddComponent( WAM );
-  
+
   WAMMotion motion;
   taskManager->AddComponent( &motion );
 
   taskManager->Connect( motion.GetName(), "Input",  WAM->GetName(), "Output" );
   taskManager->Connect( motion.GetName(), "Output", WAM->GetName(), "Input" );
-  taskManager->Connect( WAM->GetName(),    "Output", 
+  taskManager->Connect( WAM->GetName(),    "Output",
 			WAMcamera->GetName(), "Input" );
 
   taskManager->CreateAll();

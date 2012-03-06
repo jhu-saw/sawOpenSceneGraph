@@ -1,4 +1,5 @@
 #include <cisstCommon/cmnGetChar.h>
+#include <cisstCommon/cmnPath.h>
 
 #include <cisstMultiTask/mtsTaskPeriodic.h>
 #include <cisstMultiTask/mtsInterfaceProvided.h>
@@ -14,7 +15,7 @@
 
 #include <cisstStereoVision.h>
 
-// Hubble motion 
+// Hubble motion
 class HubbleMotion : public mtsTaskPeriodic {
 
 private:
@@ -41,7 +42,7 @@ public:
   void Startup(){}
   void Run(){
     ProcessQueuedCommands();
-    
+
     // rotate hubble
     vctFixedSizeVector<double,3> u( 0.0, 0.0, 1.0 );
     vctAxisAngleRotation3<double> Rwh( u, theta );
@@ -53,7 +54,7 @@ public:
     theta += 0.001;
 
   }
-  
+
   void Cleanup(){}
 
 };
@@ -91,10 +92,10 @@ int main(){
   mtsOSGStereo* camera;
   camera = new mtsOSGStereo( "camera",
 			     world,
-			     x, y, 
+			     x, y,
 			     width, height,
 			     Kl, Kr, Rtlr,
-			     Znear, Zfar, 
+			     Znear, Zfar,
 			     true );
   camera->setCullMask( maskleft, osaOSGStereo::LEFT );
   camera->setCullMask( maskright, osaOSGStereo::RIGHT );
@@ -109,13 +110,14 @@ int main(){
   taskManager->AddComponent( &hmotion );
 
   // Create the objects
-  std::string path( CISST_SOURCE_ROOT"/etc/cisstRobot/objects/" );
+  cmnPath path;
+  path.AddRelativeToCisstShare("/models/hubble");
 
-  vctFrame4x4<double> Rt(  vctMatrixRotation3<double>(),
-			   vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
+  vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
+			  vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
 
   osg::ref_ptr< mtsOSGBody > hubble;
-  hubble = new mtsOSGBody( "hubble", path+"hst.3ds", world, Rt, 0.1, 0.6);
+  hubble = new mtsOSGBody( "hubble", path.Find("hst.3ds"), world, Rt, 0.1, 0.6);
   taskManager->AddComponent( hubble.get() );
 
   // connect the motion to hubble
@@ -166,14 +168,14 @@ int main(){
 						 0 );
   }
   imageleft.setNodeMask( maskleft );
-    
+
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( flipleft.GetInput() );
   flipleft.GetOutput()->Connect( rectifierleft.GetInput() );
   rectifierleft.GetOutput()->Connect( imageleft.GetInput() );
-  
-  svlStreamManager streamright; 
-  svlFilterSourceVideoCapture sourceright(1); 
+
+  svlStreamManager streamright;
+  svlFilterSourceVideoCapture sourceright(1);
   svlFilterImageFlipRotate flipright;
   svlFilterImageRectifier  rectifierright;
   svlOSGImage imageright( 0, 0, width, height, hudright );
@@ -209,7 +211,7 @@ int main(){
   sourceright.GetOutput()->Connect( flipright.GetInput() );
   flipright.GetOutput()->Connect( rectifierright.GetInput() );
   rectifierright.GetOutput()->Connect( imageright.GetInput() );
-  
+
   if( streamleft.Play() != SVL_OK )
     { std::cerr << "Cannot start left stream." <<std::endl; }
 
