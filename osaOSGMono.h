@@ -55,6 +55,15 @@ class CISST_EXPORT osaOSGMono : public osaOSGCamera {
 	      const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>(),
 	      bool quadbufferstereo = false,
 	      bool offscreenrendering = false );
+
+  osaOSGMono( osaOSGWorld* world,
+	      int x, int y, int width, int height,
+	      const vctFixedSizeMatrix<double,3,3>& K,
+	      double zNear, double zFar,
+	      bool trackball = true,
+	      const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>(),
+	      bool quadbufferstereo = false,
+	      bool offscreenrendering = false );
   
   ~osaOSGMono();
 

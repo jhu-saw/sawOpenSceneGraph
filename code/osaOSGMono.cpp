@@ -5,6 +5,61 @@
 
 osaOSGMono::osaOSGMono( osaOSGWorld* world,
 			int x, int y, int width, int height,
+			const vctFixedSizeMatrix<double,3,3>& vctK,
+			double zNear, double zFar,
+			bool trackball, 
+			const vctFrame4x4<double>& Rtoffset,
+			bool quadbufferstereo,
+			bool offscreenrendering ) :
+  osaOSGCamera( world, trackball, Rtoffset, offscreenrendering ),
+  x( x ),                              // x position
+  y( y ),                              // y position
+  width( width ),                      // width of images
+  height( height ),
+  quadbufferstereo( quadbufferstereo ){
+
+  double x0 = 0;
+  double y0 = 0;
+
+  osg::Matrixd osgK;
+
+  double K00 = vctK[0][0]; // 526.0554;
+  double K11 = vctK[1][1]; // 525.0756;
+  double K02 = vctK[0][2]; // 313.2596;
+  double K12 = vctK[1][2]; // 233.6962;
+
+  osgK( 0, 0 ) = 2*K00/width;
+  osgK( 1, 0 ) = 0.0;
+  osgK( 2, 0 ) = ( width - 2*K02 + 2*x0)/width;
+  osgK( 3, 0 ) = 0;
+  
+  osgK( 0, 1 ) = 0.0;
+  osgK( 1, 1 ) = 2*K11/height;
+  osgK( 2, 1 ) = (-height + 2*K12 + 2*y0)/height;
+  osgK( 3, 1 ) = 0;
+  
+  osgK( 0, 2 ) = 0.0;
+  osgK( 1, 2 ) = 0.0;
+  osgK( 2, 2 ) = (-zFar - zNear)/(zFar - zNear);
+  osgK( 3, 2 ) = -2*zFar*zNear/(zFar - zNear);
+    
+  osgK( 0, 3 ) = 0.0;
+  osgK( 1, 3 ) = 0.0;
+  osgK( 2, 3 ) = -1;
+  osgK( 3, 3 ) = 0.0;
+  
+  getCamera()->setProjectionMatrix( osgK );
+  
+  // Create the view port. Again, the reason why the viewport is created here
+  // is because the SVL stuff in the final draw callback needs to be created
+  // during the constructor
+  getCamera()->setViewport( new osg::Viewport( 0, 0, width, height) );
+  
+}
+  
+
+osaOSGMono::osaOSGMono( osaOSGWorld* world,
+			int x, int y, int width, int height,
 			double fovy, double aspectRatio,
 			double zNear, double zFar,
 			bool trackball,

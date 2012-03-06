@@ -387,7 +387,7 @@ void osaOSGCamera::AddHUD( osaOSGHUD* hud )
 // This is called from the OSG update callback thread
 void osaOSGCamera::UpdateTransform()
 { 
-  /*
+
   if( getCameraManipulator() ){
     osg::Matrixd mat = getCameraManipulator()->getMatrix();
     for( int r=0; r<4; r++ ){
@@ -397,14 +397,19 @@ void osaOSGCamera::UpdateTransform()
       std::cout << std::endl;
     }
   }
-  */
+
   getCamera()->setViewMatrix( osgtransform );
 }
 
 // This is called from the MTS thread
 void osaOSGCamera::SetTransform( const vctFrame4x4<double>& Rt ){
 
-  vctFrame4x4<double> Rti( Rt * Rtoffset );
+  vctMatrixRotation3<double> R( Rt[0][0], Rt[0][1], Rt[0][2],
+				Rt[1][0], Rt[1][1], Rt[1][2],
+				Rt[2][0], Rt[2][1], Rt[2][2],
+				VCT_NORMALIZE );
+  
+  vctFrame4x4<double> Rti( vctFrame4x4<double>(R, Rt.Translation())*Rtoffset );
   Rti.InverseSelf();
   vctMatrixRotation3<double> Ri( Rti.Rotation() );
   vctQuaternionRotation3<double> qi( Ri );
