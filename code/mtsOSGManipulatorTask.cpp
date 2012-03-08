@@ -106,7 +106,7 @@ void mtsOSGManipulatorTask::Run(){
     }
 
     prmRtout.Position().FromRaw( manipulator->ForwardKinematics( vctq ) );
-
+    prmRtout.SetValid( true );
   }
 
 }

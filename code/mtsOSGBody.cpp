@@ -26,9 +26,10 @@ mtsOSGBody::mtsOSGBody( const std::string& name,
 			const vctFrame4x4<double>& Rt,
 			double scale,
 			double alpha,
+			const vctFrame4x4<double>& Rtoffset,
 			const std::string& option ):
   mtsComponent( name ),
-  osaOSGBody( model, world, Rt, scale, alpha, option ),
+  osaOSGBody( model, world, Rt, scale, alpha, Rtoffset, option ),
   input( NULL ){
 
   // Create the IO interface and add read/write commands

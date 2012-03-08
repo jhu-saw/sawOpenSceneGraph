@@ -172,8 +172,10 @@ osaOSGBody::osaOSGBody( const std::string& model,
 			const vctFrame4x4<double>& Rt,
 			double scale,
 			double alpha,
+			const vctFrame4x4<double>& Rtoffset,
 			const std::string& options ) :
   transform( Rt ),
+  Rtoffset( Rtoffset ),
   onoff( SWITCH_ON ){
   
   Initialize( scale );
@@ -186,9 +188,11 @@ osaOSGBody::osaOSGBody( const std::string& model,
 			const vctFrame4x4<double>& Rt,
 			double scale,
 			double alpha,
+			const vctFrame4x4<double>& Rtoffset,
 			const std::string& options ) :
   
   transform( Rt ),
+  Rtoffset( Rtoffset ),
   onoff( SWITCH_ON ){
   
   Initialize( scale );
@@ -204,9 +208,11 @@ osaOSGBody::osaOSGBody( const std::string& model,
 			const vctFrame4x4<double>& Rt,
 			double scale,
 			double alpha,
+			const vctFrame4x4<double>& Rtoffset,
 			const std::string& options ) :
 
   transform( Rt ),
+  Rtoffset( Rtoffset ),
   onoff( SWITCH_ON ){
   
   Initialize( scale );
@@ -439,7 +445,7 @@ void osaOSGBody::UpdateSwitch()
 { osgswitch->setValue( 0, (bool)onoff ); }
 
 void osaOSGBody::SetTransform( const vctFrame4x4<double>& Rt )
-{ transform = Rt; }
+{ transform = Rt * Rtoffset; }
 
 void osaOSGBody::SetTransform( const vctFrm3& Rt ){
   // Hack to avoid non-normalized rotations!

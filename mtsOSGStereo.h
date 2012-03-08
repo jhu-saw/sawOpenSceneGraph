@@ -64,7 +64,7 @@ class mtsOSGStereo : public mtsOSGCameraTask {
 				      width, height, 
 				      Kl, Kr, vctRt,
 				      zNear, zFar,
-					trackball,
+				      trackball,
 				      Rtoffset ) ){}
   
   ~mtsOSGStereo(){}

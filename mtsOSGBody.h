@@ -47,6 +47,7 @@ class CISST_EXPORT mtsOSGBody :
 	      const vctFrame4x4<double>& Rt,
 	      double scale = 1.0,
 	      double alpha = 1.0,
+	      const vctFrame4x4<double>& Rtoffset = vctFrame4x4<double>(),
 	      const std::string& option = std::string("") );
 
   ~mtsOSGBody(){}

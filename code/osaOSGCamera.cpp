@@ -387,7 +387,7 @@ void osaOSGCamera::AddHUD( osaOSGHUD* hud )
 // This is called from the OSG update callback thread
 void osaOSGCamera::UpdateTransform()
 { 
-
+  /*
   if( getCameraManipulator() ){
     osg::Matrixd mat = getCameraManipulator()->getMatrix();
     for( int r=0; r<4; r++ ){
@@ -397,7 +397,7 @@ void osaOSGCamera::UpdateTransform()
       std::cout << std::endl;
     }
   }
-
+  */
   getCamera()->setViewMatrix( osgtransform );
 }
 
