@@ -12,6 +12,7 @@
 # 
 # --- end cisst license ---
 
-add_subdirectory( code )
-add_subdirectory( examples )
+project (sawOpenSceneGraph)
+add_subdirectory (code)
+add_subdirectory (examples)
 

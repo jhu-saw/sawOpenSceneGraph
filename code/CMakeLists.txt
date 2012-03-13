@@ -1,7 +1,7 @@
 #
 # $Id$
 #
-# (C) Copyright 2012 Johns Hopkins University (JHU), All Rights
+# (C) Copyright 2011-2012 Johns Hopkins University (JHU), All Rights
 # Reserved.
 #
 # --- begin cisst license - do not edit ---
@@ -39,41 +39,49 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
   include (${CISST_USE_FILE})
 
   # FindOpenCV2.cmake is included with CISST
-  find_package( OpenCV2 ) 
+  # find_package( OpenCV2 )
 
-  SET(HEADER_FILES
-    ${HEADER_FILES}
+  # Set parameters for source config file generation
+  set( sawOpenSceneGraph_INCLUDE_DIR "${sawOpenSceneGraph_SOURCE_DIR}/include" )
+  set( sawOpenSceneGraph_INCLUDE_DIRS "${sawOpenSceneGraph_INCLUDE_DIR}" "${sawOpenSceneGraph_BINARY_DIR}" "${OPENSCENEGRAPH_INCLUDE_DIRS}" )
+  set( sawOpenSceneGraph_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
+  set( sawOpenSceneGraph_LIBRARIES sawOpenSceneGraph ${OPENSCENEGRAPH_LIBRARIES} )
 
-    ../osaOSGBH.h
-    ../osaOSGBody.h
-    ../osaOSGCamera.h
-    ../osaOSGHUD.h
-    ../osaOSGImage.h
-    ../osaOSGManipulator.h
-    ../osaOSGMono.h
-    ../osaOSGPick.h
-    ../osaOSGStereo.h
-    ../osaOSGWorld.h
+  cisst_cmake_debug ("OPENSCENEGRAPH_LIBRARIES: ${OPENSCENEGRAPH_LIBRARIES}")
+  cisst_cmake_debug ("sawOpenSceneGraph_INCLUDE_DIRS: ${sawOpenSceneGraph_INCLUDE_DIRS}")
+  cisst_cmake_debug ("sawOpenSceneGraph_LIBRARIES: ${sawOpenSceneGraph_LIBRARIES}")
 
-    ../mtsOSGBody.h
+  include_directories( ${sawOpenSceneGraph_INCLUDE_DIRS} )
 
-    ../mtsOSGCameraTask.h
-    ../mtsOSGImage.h
-    ../mtsOSGMono.h
-    ../mtsOSGStereo.h
+  set (HEADER_FILE_NAMES
+    osaOSGBH.h
+    osaOSGBody.h
+    osaOSGCamera.h
+    osaOSGHUD.h
+    osaOSGImage.h
+    osaOSGManipulator.h
+    osaOSGMono.h
+    osaOSGPick.h
+    osaOSGStereo.h
+    osaOSGWorld.h
 
-    ../mtsOSGBH.h
-    ../mtsOSGManipulator.h
-    ../mtsOSGManipulatorTask.h
+    mtsOSGBody.h
 
-    ../svlOSGImage.h
+    mtsOSGCameraTask.h
+    mtsOSGImage.h
+    mtsOSGMono.h
+    mtsOSGStereo.h
 
-    ../sawOpenSceneGraphExport.h
+    mtsOSGBH.h
+    mtsOSGManipulator.h
+    mtsOSGManipulatorTask.h
+
+    svlOSGImage.h
+
+    sawOpenSceneGraphExport.h
     )
 
-  SET(SOURCE_FILES
-    ${SOURCE_FILES}
-
+  set( SOURCE_FILES
     osaOSGBH.cpp
     osaOSGBody.cpp
     osaOSGCamera.cpp
@@ -95,67 +103,48 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     svlOSGImage.cpp
     )
 
-  # message( ${OPENSCENEGRAPH_INCLUDE_DIRS} )
-
-  set(SAW_OPENSCENEGRAPH_INCLUDE_DIRS
-    ${INCLUDE_OUTPUT_PATH}
-    ${OPENSCENEGRAPH_INCLUDE_DIRS}
-    )
-
-  set(SAW_OPENSCENEGRAPH_LINK_LIBRARIES
-    ${OPENSCENEGRAPH_LIBRARIES}
-    )
-
-  cisst_cmake_debug("SAW_OPENSCENEGRAPH_INCLUDE_DIRS: ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS}")
-
   # Enable OpenCV integration
-  if( OpenCV2_FOUND )
-    mark_as_advanced( FORCE ${OpenCV2_OPTIONS})
+  # if( OpenCV2_FOUND )
+  #  mark_as_advanced( FORCE ${OpenCV2_OPTIONS})
 
     #set( SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV ON )
 
     #list(APPEND SAW_OPENSCENEGRAPH_INCLUDE_DIRS ${OpenCV2_INCLUDE_DIRS} )
     #list(APPEND SAW_OPENSCENEGRAPH_LINK_LIBRARIES ${OpenCV2_LIBRARIES} )
-  endif( OpenCV2_FOUND )
+  # endif( OpenCV2_FOUND )
 
-  # Configure build targets
-  include_directories(
-    ${CISST_INCLUDE_DIR}
-    ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS}
-    )
+  unset (HEADER_FILES)
+  foreach (_header ${HEADER_FILE_NAMES})
+    set (HEADER_FILES ${HEADER_FILES} "${sawOpenSceneGraph_SOURCE_DIR}/include/sawOpenSceneGraph/${_header}")
+  endforeach ()
 
   add_library( sawOpenSceneGraph ${HEADER_FILES} ${SOURCE_FILES} )
+  set_property (TARGET sawOpenSceneGraph PROPERTY FOLDER "sawOpenSceneGraph")
 
-  target_link_libraries( sawOpenSceneGraph ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
+  target_link_libraries( sawOpenSceneGraph ${OPENSCENEGRAPH_LIBRARIES} )
 
   cisst_target_link_libraries( sawOpenSceneGraph ${REQUIRED_CISST_LIBRARIES} )
 
-  # Set parameters for source config file generation
-  set( sawOpenSceneGraph_INCLUDE_DIRS "${sawComponents_SOURCE_DIR}" "${sawComponents_BINARY_DIR}" ${SAW_OPENSCENEGRAPH_INCLUDE_DIRS} )
-  set( sawOpenSceneGraph_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
-  set( sawOpenSceneGraph_LIBRARIES sawOpenSceneGraph ${SAW_OPENSCENEGRAPH_LINK_LIBRARIES} )
 
-  # Generate config files
+   # Generate config files
   configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/sawOpenSceneGraphConfig.cmake.in"
-    "${sawComponents_BINARY_DIR}/sawOpenSceneGraphConfig.cmake"
+    "${sawOpenSceneGraph_BINARY_DIR}/sawOpenSceneGraphConfig.cmake"
     @ONLY)
 
   # Generate header with package configuration
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/sawOpenSceneGraphConfig.h.in"
-    "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
+    "${sawOpenSceneGraph_BINARY_DIR}/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
     @ONLY)
 
-  # Copy all the header files to the build tree
-  file( COPY ${HEADER_FILES}
-    DESTINATION "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph" )
-
   # Install targets for headers and library
-  install( FILES ${HEADER_FILES}
-    DESTINATION include/sawOpenSceneGraph)
+  install (DIRECTORY
+           ${sawOpenSceneGraph_INCLUDE_DIR}/sawOpenSceneGraph
+           DESTINATION include
+           PATTERN .svn EXCLUDE)
 
-  install( FILES "${sawComponents_BINARY_DIR}/include/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
+  install( FILES "${sawOpenSceneGraph_BINARY_DIR}/sawOpenSceneGraph/sawOpenSceneGraphConfig.h"
     DESTINATION include/sawOpenSceneGraph)
 
   install( TARGETS sawOpenSceneGraph
@@ -163,8 +152,8 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
 
-  install( FILES "${sawComponents_BINARY_DIR}/sawOpenSceneGraphConfig.cmake"
-    DESTINATION ${CISST_CMAKE_MODULES_INSTALL_SUFFIX}/components)
+  install( FILES "${sawOpenSceneGraph_BINARY_DIR}/sawOpenSceneGraphConfig.cmake"
+    DESTINATION "${CISST_CMAKE_INSTALL_SUFFIX}/saw")
 
   # Hide advanced options
   mark_as_advanced(
