@@ -97,11 +97,12 @@ int main( ){
   // create hubble
   cmnPath path;
   path.AddRelativeToCisstShare("/models/hubble");
+  path.AddRelativeToCisstShare("/movies");
 
   vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
 			  vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
   osg::ref_ptr< mtsOSGBody > hubble;
-  hubble = new mtsOSGBody( "hubble", path.Find("hst.3ds"), world, Rt );
+  hubble = new mtsOSGBody( "hubble", path.Find("hst.3ds"), world, Rt, 1.0, .5 );
   taskManager->AddComponent( hubble.get() );
 
 
@@ -122,25 +123,21 @@ int main( ){
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  //svlFilterSourceVideoFile sourceleft(1);
-  svlFilterSourceVideoCapture sourceleft(1);
+  svlFilterSourceVideoFile sourceleft(1);
   svlOSGImage imageleft( -0.5, -0.5, 1, 1, world );
 
   // Configure the filters
-  //sourceleft.SetFilePath("xray.avi");
-  sourceleft.DialogSetup();
+  sourceleft.SetFilePath( path.Find( "left.mpg" ) );
   imageleft.setNodeMask( maskleft );
 
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( imageleft.GetInput() );
 
   svlStreamManager streamright;
-  //svlFilterSourceVideoFile sourceright(1);
-  svlFilterSourceVideoCapture sourceright(1);
+  svlFilterSourceVideoFile sourceright(1);
   svlOSGImage imageright( -0.5, -0.5, 1, 1, world );
 
-  //sourceright.SetFilePath("traffic.avi");
-  sourceright.DialogSetup();
+  sourceright.SetFilePath( path.Find( "right.mpg" ) );
   imageright.setNodeMask( maskright );
 
   streamright.SetSourceFilter( &sourceright );

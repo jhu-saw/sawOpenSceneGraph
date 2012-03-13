@@ -112,6 +112,7 @@ int main(){
   // Create the objects
   cmnPath path;
   path.AddRelativeToCisstShare("/models/hubble");
+  path.AddRelativeToCisstShare("/movies");
 
   vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
 			  vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
@@ -131,19 +132,19 @@ int main(){
   taskManager->StartAll();
   taskManager->WaitForStateAll( mtsComponentState::ACTIVE );
 
-  cmnGetChar();
+  //cmnGetChar();
 
   // Start the svl stuff
   svlInitialize();
 
   // Creating SVL objects
   svlStreamManager streamleft;
-  svlFilterSourceVideoCapture sourceleft(1);
+  svlFilterSourceVideoFile sourceleft(1);
   svlFilterImageFlipRotate flipleft;
   svlFilterImageRectifier  rectifierleft;
   svlOSGImage imageleft( 0, 0, width, height, hudleft );
 
-  sourceleft.DialogSetup();
+  sourceleft.SetFilePath( path.Find( "left.mpg" ) );
   flipleft.SetVerticalFlip( true );
   {
     vct3x3 R( 1.0, 0.0, 0.0,
@@ -171,16 +172,16 @@ int main(){
 
   streamleft.SetSourceFilter( &sourceleft );
   sourceleft.GetOutput()->Connect( flipleft.GetInput() );
-  flipleft.GetOutput()->Connect( rectifierleft.GetInput() );
-  rectifierleft.GetOutput()->Connect( imageleft.GetInput() );
+  flipleft.GetOutput()->Connect( imageleft.GetInput() );
+  
+  svlStreamManager streamright; 
+  svlFilterSourceVideoFile sourceright(1);
 
-  svlStreamManager streamright;
-  svlFilterSourceVideoCapture sourceright(1);
   svlFilterImageFlipRotate flipright;
   svlFilterImageRectifier  rectifierright;
   svlOSGImage imageright( 0, 0, width, height, hudright );
 
-  sourceright.DialogSetup();
+  sourceright.SetFilePath( path.Find( "right.mpg" ) );
   flipright.SetVerticalFlip( true );
   {
     vct3x3 R( 1.0, 0.0, 0.0,
@@ -209,8 +210,7 @@ int main(){
 
   streamright.SetSourceFilter( &sourceright );
   sourceright.GetOutput()->Connect( flipright.GetInput() );
-  flipright.GetOutput()->Connect( rectifierright.GetInput() );
-  rectifierright.GetOutput()->Connect( imageright.GetInput() );
+  flipright.GetOutput()->Connect( imageright.GetInput() );
 
   if( streamleft.Play() != SVL_OK )
     { std::cerr << "Cannot start left stream." <<std::endl; }

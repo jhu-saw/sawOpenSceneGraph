@@ -168,6 +168,7 @@ osaOSGBody::osaOSGBody(osaOSGWorld* world, const vctFrame4x4<double>& Rt) :
     UpdateTransform();
 }
 
+
 osaOSGBody::osaOSGBody( const std::string& model, 
 			const vctFrame4x4<double>& Rt,
 			double scale,
