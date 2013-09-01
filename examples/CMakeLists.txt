@@ -29,9 +29,10 @@ if( cisst_FOUND_AS_REQUIRED )
 
   include( ${CISST_USE_FILE} )
   cisst_find_saw_component( sawOpenSceneGraph REQUIRED )
+  cisst_find_saw_component( saw3Dconnexion REQUIRED )
 
-  include_directories( ${sawOpenSceneGraph_INCLUDE_DIR} )
-  link_directories( ${sawOpenSceneGraph_LIBRARY_DIR} )
+  include_directories( ${sawOpenSceneGraph_INCLUDE_DIR} ${saw3Dconnexion_INCLUDE_DIR} )
+  link_directories( ${sawOpenSceneGraph_LIBRARY_DIR} ${saw3Dconnexion_LIBRARY_DIR} )
 
   set (sawOpenSceneGraph_EXAMPLES
        osaOSGCameraMonoExample
@@ -42,6 +43,7 @@ if( cisst_FOUND_AS_REQUIRED )
        osaOSGPickExample
        osaOSGImageSequenceExample
 
+       mtsOSGBodyUIExample
        mtsOSGCameraMonoExample
        mtsOSGCameraStereoExample
        mtsOSGImageSequenceExample
@@ -53,7 +55,7 @@ if( cisst_FOUND_AS_REQUIRED )
 
   foreach (_example ${sawOpenSceneGraph_EXAMPLES})
     add_executable (${_example} ${_example}.cpp)
-    target_link_libraries (${_example} ${sawOpenSceneGraph_LIBRARIES})
+    target_link_libraries (${_example} ${sawOpenSceneGraph_LIBRARIES} ${saw3Dconnexion_LIBRARIES} )
     cisst_target_link_libraries (${_example} ${REQUIRED_CISST_LIBRARIES})
     set_property (TARGET ${_example} PROPERTY FOLDER "sawOpenSceneGraph")
   endforeach ()

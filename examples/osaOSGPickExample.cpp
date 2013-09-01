@@ -7,11 +7,9 @@
 #include <cisstVector/vctMatrixRotation3.h>
 
 class MyPick : public osaOSGPick{
-
-  void PickHandler( osaOSGBody* body ){
+  void PickHandler( osaOSGBody* body, double, double ){
     std::cout << body->getName() << std::endl;
   }
-
 };
 
 int main(){
@@ -37,12 +35,12 @@ int main(){
 
   // Create objects
   cmnPath path;
-  path.AddRelativeToCisstShare("/models");
-  path.AddRelativeToCisstShare("/models/hubble");
+  path.AddRelativeToCisstShare("models");
+  path.AddRelativeToCisstShare("models/hubble");
   vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
 			  vctFixedSizeVector<double,3>(0.0, 0.0, 0.5) );
 
-
+  std::cout << path.Find("background.3ds") << std::endl;
   vctFrame4x4<double> eye;
   osg::ref_ptr<osaOSGBody> background;
   background = new osaOSGBody( path.Find("background.3ds"), world, eye );

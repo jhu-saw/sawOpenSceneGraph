@@ -130,7 +130,7 @@ osaOSGBody::GeodeVisitor::TriangleExtractor::operator ()
 
 // This is called at each update traversal
 void osaOSGBody::TransformCallback::operator()( osg::Node* node, 
-						  osg::NodeVisitor* nv ){
+						osg::NodeVisitor* nv ){
   osg::Referenced* data = node->getUserData();
   osaOSGBody::UserData* userdata;
   userdata = dynamic_cast<osaOSGBody::UserData*>( data );
@@ -157,15 +157,29 @@ void osaOSGBody::SwitchCallback::operator()( osg::Node* node,
 
 }   
 
-osaOSGBody::osaOSGBody(osaOSGWorld* world, const vctFrame4x4<double>& Rt) :
-    transform(Rt),
-    onoff( SWITCH_ON ){
-
-    Initialize(1.0); // scale = 1.0
-    if( world != NULL )
+osaOSGBody::osaOSGBody( osaOSGWorld* world, const vctFrame4x4<double>& Rt ) :
+  transform(Rt),
+  onoff( SWITCH_ON ){
+  
+  Initialize(1.0); // scale = 1.0
+  if( world != NULL )
     { world->addChild( this ); }
+  
+  UpdateTransform();
+}
 
-    UpdateTransform();
+osaOSGBody::osaOSGBody( osaOSGBody* body, const vctFrame4x4<double>& Rt ) :
+  transform(Rt),
+  onoff( SWITCH_ON ){
+  
+  Initialize(1.0); // scale = 1.0
+  
+  // Once this is done add the body to the world
+  if( body != NULL )
+    { body->osgtransform->addChild( this ); }
+
+  UpdateTransform();
+
 }
 
 
@@ -181,6 +195,8 @@ osaOSGBody::osaOSGBody( const std::string& model,
   
   Initialize( scale );
   ReadModel( model, options, alpha );
+
+  UpdateTransform();
 
 }
 
@@ -195,13 +211,15 @@ osaOSGBody::osaOSGBody( const std::string& model,
   transform( Rt ),
   Rtoffset( Rtoffset ),
   onoff( SWITCH_ON ){
-  
+
   Initialize( scale );
   ReadModel( model, options, alpha );
 
   // Once this is done add the body to the world
   if( world != NULL )
     { world->addChild( this ); }
+
+  UpdateTransform();
 }
 
 osaOSGBody::osaOSGBody( const std::string& model, 
@@ -222,6 +240,8 @@ osaOSGBody::osaOSGBody( const std::string& model,
   // Once this is done add the body to the world
   if( body != NULL )
     { body->osgtransform->addChild( this ); }
+
+  UpdateTransform();
 }
 
 osaOSGBody::osaOSGBody( const std::string& model, 
@@ -435,6 +455,7 @@ void osaOSGBody::Read3DData( const vctDynamicMatrix<double>& pc,
 // This is called from the body's callback
 // This reads a transformation if the body is connected to an interface
 void osaOSGBody::UpdateTransform(){
+
   vctFrame4x4<double> Rt( transform );
   osgtransform->setMatrix( osg::Matrix ( Rt[0][0], Rt[1][0], Rt[2][0], 0.0,
 					 Rt[0][1], Rt[1][1], Rt[2][1], 0.0,

@@ -18,6 +18,7 @@ http://www.cisst.org/cisst/license.txt.
 
 #include <sawOpenSceneGraph/mtsOSGBody.h>
 #include <cisstParameterTypes/prmPositionCartesianGet.h>
+#include <cisstParameterTypes/prmPositionCartesianSet.h>
 #include <cisstCommon/cmnLogger.h>
 
 mtsOSGBody::mtsOSGBody( const std::string& name,
@@ -29,37 +30,50 @@ mtsOSGBody::mtsOSGBody( const std::string& name,
 			const vctFrame4x4<double>& Rtoffset,
 			const std::string& option ):
   mtsComponent( name ),
-  osaOSGBody( model, world, Rt, scale, alpha, Rtoffset, option ),
-  input( NULL ){
+  body( model, world, Rt, scale, alpha, Rtoffset, option ){
 
   // Create the IO interface and add read/write commands
-  input = AddInterfaceRequired( "Input", MTS_OPTIONAL );
-  if( input )
-    { input->AddFunction( "GetPositionCartesian", GetPosition ); }
+  body.input = AddInterfaceRequired( "Input", MTS_OPTIONAL );
+  if( body.input )
+    { body.input->AddFunction( "GetPositionCartesian", body.GetPosition ); }
   else{
     CMN_LOG_CLASS_RUN_ERROR << "Failed to create the interface Input" 
 			    << std::endl;
   }
 
+  body.output = AddInterfaceRequired( "Output", MTS_OPTIONAL );
+  if( body.output )
+    { body.output->AddFunction( "SetPositionCartesian", body.SetPosition ); }
+
 }
 
-void mtsOSGBody::UpdateTransform(){
+void mtsOSGBody::Body::UpdateTransform(){
 
   if( GetPosition.IsValid() ){
 
     // Get the position of the camera
-    prmPositionCartesianGet Rt;
-    GetPosition( Rt );
+    prmPositionCartesianGet prmRt;
+    GetPosition( prmRt );
 
     bool valid = false;
-    Rt.GetValid( valid );
+    prmRt.GetValid( valid );
 
     // Set the transformation
-    if( valid ){ osaOSGBody::SetTransform( Rt.Position() ); }
+    if( valid )
+      { SetTransform( prmRt.Position() ); }
     
   }
 
   // Update the transformation
   osaOSGBody::UpdateTransform();
+
+  {
+    prmPositionCartesianSet prmRt;
+
+    prmRt.SetGoal( GetTransform() );
+    bool valid = true;
+    prmRt.SetValid( valid );
+    SetPosition( prmRt );
+  }
 
 }

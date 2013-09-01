@@ -162,10 +162,3 @@ osaOSGBH::Errno osaOSGBH::SetPositions(const vctDynamicVector<double>& qs){
   }
 
 }
-
-
-
-
-
-
-

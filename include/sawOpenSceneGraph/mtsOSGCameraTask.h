@@ -93,6 +93,9 @@ class CISST_EXPORT mtsOSGCameraTask : public mtsTaskContinuous{
   inline osg::ref_ptr<osaOSGCamera> GetCamera(void) 
   { return camera; }
 
+  void addEventHandler( osgGA::GUIEventHandler *eventHandler )
+  { camera->addEventHandler( eventHandler ); }
+
 };
 
 #endif

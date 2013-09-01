@@ -14,9 +14,11 @@ class CISST_EXPORT osaOSGPick : public osgGA::GUIEventHandler{
   double mousex;
   double mousey;
 
-  bool Pick( double x, double y, osgViewer::Viewer* viewer );
+  enum Event{ PUSH, DRAG, RELEASE };
 
-  virtual void PickHandler( osaOSGBody* body ){}
+  bool Pick( Event e, double x, double y, osgViewer::Viewer* viewer );
+
+  virtual void PickHandler( osaOSGBody*, Event, double, double ){}
 
  public:
 

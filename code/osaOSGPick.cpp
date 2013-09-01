@@ -6,53 +6,43 @@ osaOSGPick::osaOSGPick() : osgGA::GUIEventHandler(), mousex(0), mousey(0){}
 
 
 bool osaOSGPick::handle( const osgGA::GUIEventAdapter& ea, 
-			   osgGA::GUIActionAdapter& aa ){
+			 osgGA::GUIActionAdapter& aa ){
 
   osg::ref_ptr< osgViewer::Viewer > viewer;
   viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
-  if( !viewer ){
-    CMN_LOG_RUN_ERROR << CMN_LOG_DETAILS
-		      << " Could not cast GUIActionAdapter as Viewer." 
-		      << std::endl;
-    return false;
-  }
 
   switch( ea.getEventType() ){
 
   case osgGA::GUIEventAdapter::PUSH:
-
-  case osgGA::GUIEventAdapter::MOVE:
-    {
-      // Record mouse location for the button press
-      // and move events.
-      mousex = ea.getX();
-      mousey = ea.getY();
-      return false;
-    }
+    Pick( PUSH, ea.getXnormalized(), ea.getYnormalized(), viewer );
+    break;
+      
+  case osgGA::GUIEventAdapter::DRAG:
+    if( mousex != ea.getXnormalized() || mousey != ea.getYnormalized() )
+      { PickHandler( NULL, DRAG, ea.getXnormalized(), ea.getYnormalized() ); }
+    break;
 
   case osgGA::GUIEventAdapter::RELEASE:
-    {
-      // If the mouse hasn't moved since the last
-      // button press or move event, perform a
-      // pick. (Otherwise, the trackball
-      // manipulator will handle it.)
-      if( mousex == ea.getX() && mousey == ea.getY()){
-	if( Pick( ea.getXnormalized(), ea.getYnormalized(), viewer ) )
-	  { return true; }
-      }
-      return false;
-    }
-    
+    PickHandler( NULL, RELEASE, ea.getXnormalized(), ea.getYnormalized() );
+    break;
+
   default:
-    return false;
+    break;
   }
 
+  mousex = ea.getXnormalized();
+  mousey = ea.getYnormalized();
+
+  return true;
 }
 
 
 
 // Perform a pick operation.
-bool osaOSGPick::Pick( double x, double y, osgViewer::Viewer* viewer ){
+bool osaOSGPick::Pick( osaOSGPick::Event event, 
+		       double x, 
+		       double y, 
+		       osgViewer::Viewer* viewer ){
 
   // Nothing to pick.
   if( !viewer->getSceneData() )
@@ -86,38 +76,12 @@ bool osaOSGPick::Pick( double x, double y, osgViewer::Viewer* viewer ){
       body = dynamic_cast< osaOSGBody* >( nodePath[ idx ] );
       
       if( body.get() != NULL ){
-	PickHandler( body.get() );	
-	break;
+	PickHandler( body.get(), event, x, y );	
+	return true;
       }
     }
     
-    // useful code to extract all bodies
-    /*
-    for( intersection =intersections.begin(); 
-	 intersection!=intersections.end();
-	 intersection++ ){
-      const osg::NodePath& nodePath = intersection->nodePath;
-
-      unsigned int idx = nodePath.size();
-
-      while (idx--){
-	osaOSGBody* body = NULL;
-	body = dynamic_cast< osaOSGBody* >( nodePath[ idx ] );
-
-	if( body == NULL )
-	  { continue; }
-	bodies.push_back( body );
-      }
-    }
-    
-    bodies.unique();
-
-    std::list<osaOSGBody*>::iterator body;
-    for( body=bodies.begin(); body!=bodies.end(); body++ ){
-      std::cout << (*body)->getName() << std::endl;
-    }
-    */
-
   }
-  return true;
+
+  return false;
 }

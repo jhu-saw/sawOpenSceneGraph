@@ -8,7 +8,7 @@
 #include <osgText/Text>
 #undef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 
-int main( int, char** argv ){
+int main( int, char** ){
 
   cmnLogger::SetMask( CMN_LOG_ALLOW_ALL );
   cmnLogger::SetMaskFunction( CMN_LOG_ALLOW_ALL );

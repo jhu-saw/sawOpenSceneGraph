@@ -165,6 +165,7 @@ class CISST_EXPORT osaOSGBody : public osg::Group {
     Add body to a given world or subworld
   */
   osaOSGBody(osaOSGWorld* world, const vctFrame4x4<double>& Rt);
+  osaOSGBody(osaOSGBody* body, const vctFrame4x4<double>& Rt);
 
   //! OSG Body constructor
   /**

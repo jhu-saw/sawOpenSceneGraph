@@ -21,22 +21,45 @@ http://www.cisst.org/cisst/license.txt.
 
 #include <cisstMultiTask/mtsComponent.h>
 #include <cisstMultiTask/mtsInterfaceRequired.h>
+#include <cisstMultiTask/mtsInterfaceProvided.h>
+
+#include <cisstParameterTypes/prmPositionCartesianGet.h>
 
 #include <sawOpenSceneGraph/osaOSGBody.h>
 #include <sawOpenSceneGraph/sawOpenSceneGraphExport.h>
 
-class CISST_EXPORT mtsOSGBody : 
-  public mtsComponent,
-  public osaOSGBody {
+class CISST_EXPORT mtsOSGBody : public mtsComponent{
   
- private:
+ protected:
 
-  //! The input interface
-  mtsInterfaceRequired* input;
-  mtsFunctionRead GetPosition;
+  class Body : public osaOSGBody{
 
-  //! This update method is called from the mtsOSGBody::UpdateCallback
-  virtual void UpdateTransform();
+  protected:
+
+    //! This update method is called from the mtsOSGBody::UpdateCallback
+    virtual void UpdateTransform();
+    
+  public:
+
+    //! The input interface
+    mtsInterfaceRequired* input;
+    mtsFunctionRead GetPosition;
+
+    mtsInterfaceRequired* output;
+    mtsFunctionWrite SetPosition;
+
+    Body( const std::string& model,
+	  osaOSGWorld* world,
+	  const vctFrame4x4<double>& Rt,
+	  double scale,
+	  double alpha,
+	  const vctFrame4x4<double>& Rtoffset,
+	  const std::string& option ) :
+      osaOSGBody( model, world, Rt, scale, alpha, Rtoffset, option ),
+      input( NULL ){}
+  };
+
+  Body body;
 
  public:
   

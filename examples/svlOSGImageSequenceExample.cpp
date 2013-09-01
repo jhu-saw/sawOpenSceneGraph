@@ -101,9 +101,9 @@ int main( ){
 
   vctFrame4x4<double> Rt( vctMatrixRotation3<double>(),
 			  vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
-  osg::ref_ptr< mtsOSGBody > hubble;
+  mtsOSGBody* hubble;
   hubble = new mtsOSGBody( "hubble", path.Find("hst.3ds"), world, Rt, 1.0, .5 );
-  taskManager->AddComponent( hubble.get() );
+  taskManager->AddComponent( hubble );
 
 
   // connect the motion to hubble

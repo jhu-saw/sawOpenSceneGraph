@@ -56,6 +56,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
   set (HEADER_FILE_NAMES
     osaOSGBH.h
     osaOSGBody.h
+    osaOSGBodyUI.h
     osaOSGCamera.h
     osaOSGHUD.h
     osaOSGImage.h
@@ -66,6 +67,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     osaOSGWorld.h
 
     mtsOSGBody.h
+    mtsOSGBodyUI.h
 
     mtsOSGCameraTask.h
     mtsOSGImage.h
@@ -84,6 +86,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
   set( SOURCE_FILES
     osaOSGBH.cpp
     osaOSGBody.cpp
+    osaOSGBodyUI.cpp
     osaOSGCamera.cpp
     osaOSGHUD.cpp
     osaOSGImage.cpp
@@ -94,6 +97,7 @@ if( cisst_FOUND_AS_REQUIRED AND OPENSCENEGRAPH_FOUND )
     osaOSGWorld.cpp
 
     mtsOSGBody.cpp
+    mtsOSGBodyUI.cpp
 
     mtsOSGCameraTask.cpp
     mtsOSGImage.cpp

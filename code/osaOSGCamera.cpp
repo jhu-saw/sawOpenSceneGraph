@@ -14,7 +14,7 @@
 
 // This operator is called during update traversal
 void osaOSGCamera::UpdateCallback::operator()( osg::Node* node, 
-						 osg::NodeVisitor* nv ){
+					       osg::NodeVisitor* nv ){
 
   osaOSGCamera::Data* data = NULL;
   data = dynamic_cast<osaOSGCamera::Data*>( node->getUserData() );

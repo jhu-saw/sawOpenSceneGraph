@@ -36,7 +36,7 @@ public:
   void Startup(){}
   void Run(){
     ProcessQueuedCommands();
-    Rt.Position().Translation()[2] += 0.01;
+    Rt.Position().Translation()[2] += 0.001;
   }
 
   void Cleanup(){}
@@ -81,7 +81,7 @@ public:
 
     Rt.Position() = Rtwh;
     Rt.SetValid( true );
-    theta += 0.001;
+    theta += 0.1;
 
   }
 
@@ -127,9 +127,9 @@ int main(){
 
   vctFrame4x4<double> Rt(  vctMatrixRotation3<double>(),
 			   vctFixedSizeVector<double,3>( 0.0, 0.0, 0.5 ) );
-  osg::ref_ptr< mtsOSGBody > hubble;
+  mtsOSGBody* hubble;
   hubble = new mtsOSGBody( "hubble", path.Find("hst.3ds"), world, Rt, 0.8 );
-  taskManager->AddComponent( hubble.get() );
+  taskManager->AddComponent( hubble );
 
   osg::ref_ptr< osaOSGBody > background;
   background = new osaOSGBody( path.Find("background.3ds"), world,
