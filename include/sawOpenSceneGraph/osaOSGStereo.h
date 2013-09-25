@@ -88,7 +88,7 @@ class CISST_EXPORT osaOSGStereo : public osaOSGCamera {
         camera->setCullMask( mask ); 
     }
     
-    void Initialize();
+    virtual void Initialize( const std::string& name = std::string() );
     
 #if 0
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV

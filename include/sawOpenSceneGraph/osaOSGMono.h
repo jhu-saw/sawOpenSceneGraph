@@ -67,7 +67,7 @@ class CISST_EXPORT osaOSGMono : public osaOSGCamera {
   
   ~osaOSGMono();
 
-  void Initialize();
+  virtual void Initialize( const std::string& name = std::string() );
     
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
 

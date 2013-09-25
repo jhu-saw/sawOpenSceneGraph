@@ -17,7 +17,7 @@ int main( int, char** ){
   int x = 0, y = 0;
   int width = 320, height = 240;
   double Znear = 0.1, Zfar = 10.0;
-  osg::ref_ptr< osaOSGMono > camera;
+  osg::ref_ptr< osaOSGCamera > camera;
   camera = new osaOSGMono( world,
 			   x, y, width, height,
 			   55.0, ((double)width)/((double)height),

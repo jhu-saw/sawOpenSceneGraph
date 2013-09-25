@@ -237,7 +237,7 @@ osaOSGStereo::osaOSGStereo( osaOSGWorld* world,
 
 osaOSGStereo::~osaOSGStereo(){}
 
-void osaOSGStereo::Initialize(){
+void osaOSGStereo::Initialize( const std::string& name ){
     
     // Create the graphic context traits. The reason why this is here is because
     // Windows somehow requires the context to be allocated within the same 
@@ -247,10 +247,13 @@ void osaOSGStereo::Initialize(){
         
         osg::ref_ptr<osg::GraphicsContext::Traits> traits;
         traits = new osg::GraphicsContext::Traits;
+        traits->readDISPLAY();
         traits->x = x + 0;
         traits->y = y + 0;
         traits->width = width;
         traits->height = height;
+        traits->windowName = name + std::string( "LEFT" );
+
         traits->windowDecoration = true;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
@@ -275,10 +278,13 @@ void osaOSGStereo::Initialize(){
         
         osg::ref_ptr<osg::GraphicsContext::Traits> traits;
         traits = new osg::GraphicsContext::Traits;
+        traits->readDISPLAY();
         traits->x = x + width;
         traits->y = y + 0;
         traits->width = width;
         traits->height = height;
+        traits->windowName = name + std::string( "RIGHT" );
+
         traits->windowDecoration = true;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;

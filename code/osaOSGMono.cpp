@@ -102,19 +102,24 @@ osaOSGMono::osaOSGMono( osaOSGWorld* world,
 osaOSGMono::~osaOSGMono(){}
 #include <osg/DisplaySettings>
 
-void osaOSGMono::Initialize(){
+void osaOSGMono::Initialize( const std::string& name ){
 
   // Create the graphic context traits. The reason why this is here is because
   // Windows somehow requires the context to be allocated within the same thread
   // as the rendering thread. And this method is called within the camera thread
   osg::ref_ptr<osg::GraphicsContext::Traits> traits;
   traits = new osg::GraphicsContext::Traits;
+  traits->readDISPLAY();
   traits->x = x ;
   traits->y = y ;
   traits->width = width;
   traits->height = height;
+  traits->windowName = name;
+
   traits->windowDecoration = true;
+  traits->supportsResize = true;
   traits->doubleBuffer = true;
+
   if( IsQuadBufferStereoEnabled() ){ traits->quadBufferStereo = true; }
   if( IsOffscreenRenderingEnabled() ) { traits->pbuffer = true; }
   traits->sharedContext = 0;

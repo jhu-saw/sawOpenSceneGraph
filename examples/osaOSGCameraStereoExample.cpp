@@ -22,7 +22,7 @@ int main(){
 			     Znear, Zfar,
 			     0.10,
 			     false );
-  camera->Initialize();
+  camera->Initialize( std::string( "Stereo-" ) );
 
   // Create the objects
   cmnPath path;

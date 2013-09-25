@@ -44,6 +44,10 @@ mtsOSGBody::mtsOSGBody( const std::string& name,
   body.output = AddInterfaceRequired( "Output", MTS_OPTIONAL );
   if( body.output )
     { body.output->AddFunction( "SetPositionCartesian", body.SetPosition ); }
+  else{
+    CMN_LOG_CLASS_RUN_ERROR << "Failed to create the interface Input" 
+			    << std::endl;
+  }
 
 }
 

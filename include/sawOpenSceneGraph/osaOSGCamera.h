@@ -3,6 +3,8 @@
 #ifndef _osaOSGCamera_h
 #define _osaOSGCamera_h
 
+#include <cisstCommon/cmnPortability.h>
+
 #include <sawOpenSceneGraph/sawOpenSceneGraphConfig.h>
 
 #ifdef SAW_OPENSCENEGRAPH_SUPPORTS_OPENCV
@@ -223,7 +225,7 @@ class CISST_EXPORT osaOSGCamera : public osgViewer::Viewer{
 
   ~osaOSGCamera();
 
-  virtual void Initialize(){}
+  virtual void Initialize( const std::string& CMN_UNUSED(name)=std::string() ){}
 
   void setCullMask( osg::Node::NodeMask mask )
   { getCamera()->setCullMask( mask ); }

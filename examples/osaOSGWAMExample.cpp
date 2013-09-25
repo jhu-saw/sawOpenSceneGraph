@@ -3,7 +3,7 @@
 #include <sawOpenSceneGraph/osaOSGMono.h>
 #include <sawOpenSceneGraph/osaOSGManipulator.h>
 
-int main( int argc, char** argv ){
+int main( int, char** ){
 
   cmnLogger::SetMask( CMN_LOG_ALLOW_ALL );
   cmnLogger::SetMaskFunction( CMN_LOG_ALLOW_ALL );
