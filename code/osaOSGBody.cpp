@@ -444,7 +444,7 @@ void osaOSGBody::Read3DData( const vctDynamicMatrix<double>& pc,
   colorIndexArray->push_back(0);
 
   pointsGeom->setColorArray( colorArray );
-  pointsGeom->setColorIndices(colorIndexArray);
+  //pointsGeom->setColorIndices(colorIndexArray);
   pointsGeom->setColorBinding(osg::Geometry::BIND_OVERALL);
 
   drawArrayPoints->setFirst( 0 );

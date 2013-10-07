@@ -29,10 +29,9 @@ if( cisst_FOUND_AS_REQUIRED )
 
   include( ${CISST_USE_FILE} )
   cisst_find_saw_component( sawOpenSceneGraph REQUIRED )
-  cisst_find_saw_component( saw3Dconnexion REQUIRED )
 
-  include_directories( ${sawOpenSceneGraph_INCLUDE_DIR} ${saw3Dconnexion_INCLUDE_DIR} )
-  link_directories( ${sawOpenSceneGraph_LIBRARY_DIR} ${saw3Dconnexion_LIBRARY_DIR} )
+  include_directories( ${sawOpenSceneGraph_INCLUDE_DIR} )
+  link_directories( ${sawOpenSceneGraph_LIBRARY_DIR} )
 
   set (sawOpenSceneGraph_EXAMPLES
        osaOSGCameraMonoExample
@@ -43,7 +42,6 @@ if( cisst_FOUND_AS_REQUIRED )
        osaOSGPickExample
        osaOSGImageSequenceExample
 
-       mtsOSGBodyUIExample
        mtsOSGCameraMonoExample
        mtsOSGCameraStereoExample
        mtsOSGImageSequenceExample
