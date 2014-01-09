@@ -59,12 +59,12 @@ void osaOSGHUD::Initialize( osg::GraphicsContext* gc ){
     osg::ref_ptr<osg::Group> group = parent->asGroup();
     if( group != 0 ){
       for( unsigned int j=0; j<group->getNumChildren(); j++ ){
-	osg::ref_ptr<osg::Node> child = group->getChild( j );
-	if( child->getName() == "HUD" ){ 
-	  found = true;
-	  osg::ref_ptr<osg::Group> hud = child->asGroup();
-	  hud->addChild( this );
-	}
+        osg::ref_ptr<osg::Node> child = group->getChild( j );
+        if( child->getName() == "HUD" ){
+          found = true;
+          osg::ref_ptr<osg::Group> hud = child->asGroup();
+          hud->addChild( this );
+        }
       }
     }
   }

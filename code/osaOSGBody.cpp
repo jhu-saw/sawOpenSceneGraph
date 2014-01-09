@@ -104,7 +104,7 @@ void osaOSGBody::GeodeVisitor::apply( osg::Geode& geode  ){
     // apply the extractor to the drawable
     geode.getDrawable( i )->accept( te );
 
-    // copyt the drawable triangles to the geode triangles
+    // copy the drawable triangles to the geode triangles
     geodetriangles.insert( geodetriangles.end(),
 			   te.drawabletriangles.begin(),
 			   te.drawabletriangles.end() );

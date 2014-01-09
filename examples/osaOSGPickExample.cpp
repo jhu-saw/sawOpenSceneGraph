@@ -7,8 +7,10 @@
 #include <cisstVector/vctMatrixRotation3.h>
 
 class MyPick : public osaOSGPick{
-  void PickHandler( osaOSGBody* body, double, double ){
-    std::cout << body->getName() << std::endl;
+  void PickHandler(osaOSGBody *body, Event, double, double) {
+    if (body != NULL) {
+      std::cout << body->getName() << std::endl;
+    }
   }
 };
 
@@ -50,9 +52,9 @@ int main(){
   hubble = new osaOSGBody( path.Find("hst.3ds"), world, Rt );
   hubble->setName( "hubble" );
 
-  while( !camera->done() )
+  while( !camera->done() ) {
     camera->frame();
-
+  }
 
   return 0;
 

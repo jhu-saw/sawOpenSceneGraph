@@ -76,8 +76,8 @@ bool osaOSGPick::Pick( osaOSGPick::Event event,
       body = dynamic_cast< osaOSGBody* >( nodePath[ idx ] );
       
       if( body.get() != NULL ){
-	PickHandler( body.get(), event, x, y );	
-	return true;
+        PickHandler( body.get(), event, x, y );
+        return true;
       }
     }
     

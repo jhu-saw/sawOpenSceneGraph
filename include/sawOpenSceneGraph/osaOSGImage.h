@@ -106,7 +106,7 @@ class CISST_EXPORT osaOSGImage : public osg::Group {
 
       // update the image
       if( userdata != NULL )
-	{ userdata->GetImage()->UpdateImage(); }
+      { userdata->GetImage()->UpdateImage(); }
     }
 
   };
