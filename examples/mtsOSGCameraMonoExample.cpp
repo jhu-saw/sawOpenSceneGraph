@@ -43,7 +43,7 @@ public:
 
 };
 
-// Camera to move an object
+// Class to move an object
 class HubbleMotion : public mtsTaskPeriodic {
 
 private:
